@@ -1,0 +1,134 @@
+import type { Metadata } from "next"
+import { fixtures, now } from "@/lib/content"
+import { getEntries, logTypes, shortDate, weekStart, type LogEntry, type LogType } from "@/lib/log"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { Reveal } from "@/components/reveal"
+import { LogRow } from "@/components/log/log-row"
+import { Chronology, TypeFilter } from "@/components/log/chronology"
+
+export const metadata: Metadata = {
+  title: "Log",
+  description: "Every study, test and iteration GTT makes on the way to the Final Pitch — the ones that worked and the ones that didn't.",
+}
+
+const KICKOFF = fixtures[0].start
+
+export default function LogPage() {
+  const entries = getEntries()
+  const counts: Partial<Record<LogType, number>> = {}
+  for (const e of entries) counts[e.type] = (counts[e.type] ?? 0) + 1
+
+  const tested = entries.filter((e) => e.type === "experiment" || e.type === "iteration")
+  const ok = tested.filter((e) => e.outcome === "success").length
+  const ko = tested.filter((e) => e.outcome === "failure").length
+  const spell = entries.flatMap((e) => e.metrics.filter((m) => m.name.toLowerCase() === "spellf1").map((m) => m.value))
+  const best = spell.length ? Math.max(...spell) : undefined
+
+  // semanas de partido desde el arranque
+  const weeks = new Map<string, LogEntry[]>()
+  for (const e of entries) {
+    const w = weekStart(e.date)
+    weeks.set(w, [...(weeks.get(w) ?? []), e])
+  }
+  const matchweek = (w: string) => Math.floor((Date.parse(w) - Date.parse(weekStart(KICKOFF))) / (7 * 86_400_000)) + 1
+
+  const last = entries[0]?.date
+  const to = [fixtures[1].start, last ?? KICKOFF].sort().at(-1)!
+
+  return (
+    <>
+      <Header />
+      <main id="content">
+        <section className="grain px-4 pb-12 pt-24 sm:px-6 lg:px-10">
+          <div className="mx-auto max-w-[1440px]">
+            <div className="label grid grid-cols-2 gap-y-2 border-b border-line pb-3 text-muted sm:grid-cols-3">
+              <span>GTT ©2026 — The log</span>
+              <span className="text-right sm:text-center">
+                {entries.length} {entries.length === 1 ? "entry" : "entries"}
+                {last && <> · updated {shortDate(last)}</>}
+              </span>
+              <span className="hidden text-right sm:block">Studies · Code · Experiments</span>
+            </div>
+
+            <h1 className="font-display-tight mt-10 text-[clamp(4.5rem,calc(19vw*var(--display-scale)),calc(17rem*var(--display-scale)))]">
+              The <span className="accent">log.</span>
+            </h1>
+
+            <div className="mt-8 grid gap-8 border-t border-ink pt-6 md:grid-cols-12 md:gap-6">
+              <p className="text-balance text-xl leading-snug sm:text-2xl md:col-span-6 lg:col-span-5">
+                Every study, test and iteration on the way to the Final Pitch —{" "}
+                <span className="accent [--accent-base:1.15em]">the ones that worked and the ones that didn&apos;t.</span> In
+                order.
+              </p>
+              <dl className="grid grid-cols-3 gap-4 rounded-2xl border border-line bg-paper-2/70 p-5 md:col-span-5 md:col-start-8 lg:col-span-4 lg:col-start-9">
+                <div>
+                  <dt className="label text-muted">Entries</dt>
+                  <dd className="mt-1 font-mono text-2xl tabular-nums">{entries.length}</dd>
+                </div>
+                <div>
+                  <dt className="label text-muted">Tests ✓ / ✕</dt>
+                  <dd className="mt-1 font-mono text-2xl tabular-nums">
+                    {ok} / {ko}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="label text-muted">Best spellF1</dt>
+                  <dd className="mt-1 font-mono text-2xl tabular-nums">{best !== undefined ? best.toFixed(4) : "—"}</dd>
+                </div>
+                <p className="label col-span-3 border-t border-line pt-3 text-muted">
+                  Baseline to beat · {now.target.value}
+                </p>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 pb-10 sm:px-6 lg:px-10">
+          <Reveal className="mx-auto max-w-[1440px]">
+            <Chronology
+              from={KICKOFF}
+              to={to}
+              milestones={fixtures.map((f) => ({ date: f.start, title: f.title }))}
+              dots={entries.map(({ slug, title, date, type, outcome }) => ({ slug, title, date, type, outcome }))}
+            />
+          </Reveal>
+        </section>
+
+        <section className="px-4 pb-24 sm:px-6 sm:pb-32 lg:px-10">
+          <div className="mx-auto max-w-[1440px]">
+            <TypeFilter counts={counts} />
+
+            {entries.length === 0 ? (
+              <p className="mt-10 border-t border-line pt-6 text-muted">
+                No entries yet. The first one goes in <code className="font-mono">content/log/</code> — see{" "}
+                <code className="font-mono">lib/log.ts</code>.
+              </p>
+            ) : (
+              <div id="log-list" className="mt-8">
+                {[...weeks.entries()].map(([w, list]) => (
+                  <div key={w} data-week={w} className="mt-10 first:mt-0">
+                    <p className="label flex items-center justify-between border-t border-ink pt-3">
+                      <span className="flex items-center gap-2">
+                        <span aria-hidden className="blaugrana -mt-[13px] mr-1 h-[3px] w-8 self-start" />
+                        <span className="text-accent">MW{String(matchweek(w)).padStart(2, "0")}</span> — Matchweek{" "}
+                        {matchweek(w)}
+                      </span>
+                      <span className="text-muted">Week of {shortDate(w)}</span>
+                    </p>
+                    {list.map((e) => (
+                      <div key={e.slug} data-entry-type={e.type} title={logTypes[e.type].description}>
+                        <LogRow entry={e} anchor />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  )
+}

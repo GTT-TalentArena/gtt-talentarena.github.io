@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+.DS_Store
+.claude
+# vista previa local del README de la organización (no se publica)
+public/__readme
