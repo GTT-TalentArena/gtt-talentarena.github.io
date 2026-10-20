@@ -10,7 +10,7 @@ import { Chronology, TypeFilter } from "@/components/log/chronology"
 export const metadata: Metadata = {
   title: "Log",
   description:
-    "GTT's notebook on the possession model: what we study, the improvements we find and the tests we run in our fork of the challenge — the ones that worked and the ones that didn't.",
+    "GTT's log of the work on the possession model: what we study, the improvements we find and the tests we run in our fork of the challenge — the ones that worked and the ones that didn't.",
 }
 
 const KICKOFF = fixtures[0].start
@@ -59,7 +59,7 @@ export default function LogPage() {
             <div className="mt-8 grid gap-8 border-t border-ink pt-6 md:grid-cols-12 md:gap-6">
               <div className="md:col-span-6 lg:col-span-5">
                 <p className="text-balance text-xl leading-snug sm:text-2xl">
-                  Our notebook on the possession model: what we study, the improvements we find and the tests we run —{" "}
+                  What we study, the improvements we find and the tests we run on the possession model —{" "}
                   <span className="accent [--accent-base:1.15em]">the ones that worked and the ones that didn&apos;t.</span>
                 </p>
                 <p className="mt-5 text-pretty leading-relaxed text-muted">

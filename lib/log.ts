@@ -4,7 +4,7 @@
  * ════════════════════════════════════════════════════════════════════════════════════════════
  *
  *  ── Qué es (y qué NO es) ───────────────────────────────────────────────────────────────────
- *  El log (/log) es el cuaderno de trabajo del MODELO DE POSESIÓN. Registra lo que estudiamos, las
+ *  El log (/log) registra el trabajo sobre el MODELO DE POSESIÓN: lo que estudiamos, las
  *  mejoras que encontramos y las pruebas que hacemos sobre el repositorio principal del proyecto:
  *  nuestro fork del reto, https://github.com/GTT-TalentArena/more-than-a-hack-2027
  *
@@ -22,7 +22,8 @@
  *  Usa estas etiquetas cuando toque para que las entradas de un mismo tema se puedan seguir.
  *
  *  ── Cómo trabajamos (de dónde salen las entradas) ──────────────────────────────────────────
- *  1. Estudio: primero en ESPAÑOL, en un .md dentro de docs/ del fork (repo principal).
+ *  1. Estudio: primero en ESPAÑOL, en un .md dentro de docs/ del fork (repo principal). Ese es el
+ *     cuaderno de estudio y va APARTE: no se copia aquí, se resume y se enlaza.
  *  2. Cuando está claro y ANTES de programar nada: una entrada aquí, en inglés, para el resto del
  *     equipo, con lo encontrado y las mejoras propuestas, enlazando ese .md del fork.
  *  3. Al programar y probar: entradas de experiment / iteration con los resultados (también los
@@ -55,7 +56,7 @@
  *        split: public-5min     # opcional: dónde se midió (public-5min, cv-fold-2…)
  *        better: higher         # opcional: higher (por defecto) | lower
  *    tags:     [hysteresis, smoothing]                         (opcional · ver «Focos actuales»)
- *    links:                                                    (opcional · siempre al fork: docs/, commit, PR, notebook)
+ *    links:                                                    (opcional · siempre al fork: docs/, commit, PR, Jupyter)
  *      - label: "Study (ES)"
  *        href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/docs/<estudio>.md
  *

@@ -5,12 +5,13 @@ Next.js 16 + Tailwind CSS 4, exportada como web estática y publicada con GitHub
 
 ## Si te piden añadir algo al log
 
-El log (`/log`) es el cuaderno del **modelo de posesión**: lo que estudiamos, las mejoras que encontramos y las
+El log (`/log`) registra el trabajo sobre el **modelo de posesión**: lo que estudiamos, las mejoras que encontramos y las
 pruebas que hacemos en el repo principal del proyecto, el fork
 [`GTT-TalentArena/more-than-a-hack-2027`](https://github.com/GTT-TalentArena/more-than-a-hack-2027).
 **No** es un registro de cambios de esta web. **Lee primero el comentario al principio de
 [`lib/log.ts`](lib/log.ts)**: explica el formato, los focos actuales y el flujo (estudio en español en `docs/` del
-fork → entrada aquí en inglés antes de programar → experimentos con sus resultados).
+fork → entrada aquí en inglés antes de programar → experimentos con sus resultados). El estudio en español es el
+cuaderno, y va aparte, en `docs/` del fork: el log solo resume lo que sale de él.
 
 En resumen:
 

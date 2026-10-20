@@ -1,6 +1,7 @@
 ---
 # PLANTILLA · copia este fichero como content/log/AAAA-MM-DD-slug-corto.md
-# El log es el cuaderno del MODELO DE POSESIÓN (trabajo en el fork del reto), nunca de esta web.
+# El log registra el trabajo sobre el MODELO DE POSESIÓN (en el fork del reto), nunca cambios de esta web.
+# El estudio largo en español (el cuaderno) va aparte, en docs/ del fork: aquí se resume y se enlaza.
 # Instrucciones completas al principio de lib/log.ts. Los ficheros que empiezan por _ no se publican.
 title: "Hysteresis on possession changes"
 date: 2026-10-24

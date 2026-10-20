@@ -11,7 +11,7 @@ GitHub de la organización.
 | Ruta | Qué es |
 | :-- | :-- |
 | `/` | Portada («Team»): reto, plantilla en 1-2-2, enfoque y calendario, con su propio índice de secciones |
-| `/log` | El cuaderno del modelo de posesión: estudios, mejoras y pruebas sobre el fork del reto, en orden |
+| `/log` | El log del modelo de posesión: estudios, mejoras y pruebas sobre el fork del reto, en orden |
 | `/previews/*` | Lienzos para las imágenes del README de la organización (no se indexan) |
 
 ## Añadir una entrada al log

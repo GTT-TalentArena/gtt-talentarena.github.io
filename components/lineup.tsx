@@ -84,9 +84,6 @@ export function Lineup({ still = false }: { still?: boolean }) {
                 } group-focus-visible:outline-2 group-focus-visible:outline-offset-4 group-focus-visible:outline-accent`}
               >
                 <Avatar player={p} color={isActive} />
-                <span className="absolute -right-1.5 -top-1.5 grid size-5 place-items-center rounded-full bg-ink font-mono text-[0.55rem] text-paper ring-2 ring-paper sm:size-6 sm:text-[0.62rem] lg:size-7">
-                  {p.number}
-                </span>
               </span>
               <span className="mt-1 rounded-full bg-paper/85 px-1.5 py-0.5 font-display text-[0.78rem] font-semibold leading-tight tracking-[-0.02em] backdrop-blur sm:mt-2 sm:px-2 sm:text-base">
                 {p.name}
@@ -191,9 +188,7 @@ function Info({
           </svg>
         </button>
       )}
-      <p className="label text-muted">
-        <span className="text-accent">{p.number}</span> — {p.position}
-      </p>
+      <p className="label text-accent">{p.position}</p>
       <p className="mt-2 font-display text-[1.9rem] font-semibold leading-none tracking-[-0.03em]">{p.name}</p>
       <p className="accent mt-1.5 leading-tight [--accent-base:1.25rem]">{p.role || <span className="text-muted">Role pending</span>}</p>
       <p className="label mt-3 text-muted">{p.github ? `@${p.github}` : "Signing soon"}</p>

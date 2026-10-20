@@ -8,8 +8,8 @@
  * Uso: npm run build && npm run serve   (en otra terminal)
  *      npm run previews -- http://localhost:4173
  */
-import { spawnSync } from "node:child_process"
-import { existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs"
+import { spawn, spawnSync } from "node:child_process"
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { dirname, join, resolve } from "node:path"
 
@@ -50,18 +50,23 @@ const shots: Shot[] = [
 
 node("pitch-svg.ts")
 
-// perfil temporal: nunca se toca el perfil del navegador de la persona
-const userDataDir = mkdtempSync(join(tmpdir(), "gtt-previews-"))
-const flags = (w: number, h: number, wait: number) => [
-  "--headless=new",
-  "--disable-gpu",
-  "--hide-scrollbars",
-  "--no-first-run",
-  "--no-default-browser-check",
-  `--user-data-dir=${userDataDir}`,
-  `--window-size=${w},${h}`,
-  `--virtual-time-budget=${wait}`,
-]
+// Perfil temporal NUEVO en cada llamada: nunca se toca el perfil del navegador de la persona, y si
+// se reutiliza uno, Edge le pasa el trabajo a la instancia anterior (aún viva) y sale sin hacer nada.
+const profiles: string[] = []
+const flags = (w: number, h: number, wait: number) => {
+  const dir = mkdtempSync(join(tmpdir(), "gtt-previews-"))
+  profiles.push(dir)
+  return [
+    "--headless=new",
+    "--disable-gpu",
+    "--hide-scrollbars",
+    "--no-first-run",
+    "--no-default-browser-check",
+    `--user-data-dir=${dir}`,
+    `--window-size=${w},${h}`,
+    `--virtual-time-budget=${wait}`,
+  ]
+}
 
 try {
   mkdirSync(cache, { recursive: true })
@@ -81,17 +86,78 @@ try {
   }
 
   // dónde queda el balón en la preview de la web (lo apunta app/previews/site/ball-slot.tsx)
-  const dom = spawnSync(browser, [...flags(1280, 800, 9000), "--dump-dom", `${base}/previews/site/`], {
-    encoding: "utf8",
-    timeout: 60_000,
-    maxBuffer: 64 * 1024 * 1024,
-  })
-  const ball = dom.stdout.match(/data-ball="([\d.,]+)"/)?.[1]
+  const ball = await readFromPage(`${base}/previews/site/`, "document.body.dataset.ball")
   if (!ball) throw new Error("No encuentro la posición del balón en /previews/site/ (data-ball)")
   writeFileSync(join(cache, "site-ball.json"), JSON.stringify(ball.split(",").map(Number)))
   console.log(`✓ posición del balón en la preview de la web: ${ball}`)
 } finally {
-  rmSync(userDataDir, { recursive: true, force: true })
+  // en Windows, Edge puede tardar en soltar los ficheros: si no se dejan borrar, se quedan en %TEMP%
+  for (const dir of profiles) {
+    try {
+      rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 })
+    } catch {}
+  }
 }
 
 node("readme-svg.ts")
+
+/**
+ * Abre `url` en el navegador headless y devuelve el valor de `expression` en cuanto deja de estar
+ * vacío. Usa el protocolo DevTools (WebSocket nativo de Node), no --dump-dom: en Edge 155 ese
+ * modo dejó de escribir en la salida estándar.
+ */
+async function readFromPage(url: string, expression: string, timeoutMs = 30_000): Promise<string | undefined> {
+  const dir = mkdtempSync(join(tmpdir(), "gtt-previews-"))
+  profiles.push(dir)
+  const child = spawn(browser!, [
+    "--headless=new",
+    "--disable-gpu",
+    "--no-first-run",
+    "--no-default-browser-check",
+    `--user-data-dir=${dir}`,
+    "--remote-debugging-port=0",
+    "--window-size=1280,800",
+    "about:blank",
+  ])
+  const deadline = Date.now() + timeoutMs
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+  try {
+    // el navegador apunta su puerto de depuración en DevToolsActivePort dentro del perfil
+    const portFile = join(dir, "DevToolsActivePort")
+    while (!existsSync(portFile) || !readFileSync(portFile, "utf8").includes("\n")) {
+      if (Date.now() > deadline) throw new Error("El navegador no abrió el puerto de depuración")
+      await wait(100)
+    }
+    const [port, path] = readFileSync(portFile, "utf8").trim().split("\n")
+    const ws = new WebSocket(`ws://127.0.0.1:${port}${path}`)
+    await new Promise((ok, ko) => ((ws.onopen = ok), (ws.onerror = ko)))
+    let id = 0
+    const pending = new Map<number, (r: { result?: Record<string, unknown> }) => void>()
+    ws.onmessage = (e) => {
+      const msg = JSON.parse(String(e.data))
+      pending.get(msg.id)?.(msg)
+      pending.delete(msg.id)
+    }
+    const send = (method: string, params: object = {}, sessionId?: string) =>
+      new Promise<{ result?: Record<string, unknown> }>((ok) => {
+        pending.set(++id, ok)
+        ws.send(JSON.stringify({ id, method, params, sessionId }))
+      })
+
+    const target = await send("Target.createTarget", { url })
+    const attached = await send("Target.attachToTarget", { targetId: target.result!.targetId, flatten: true })
+    const sessionId = attached.result!.sessionId as string
+    let value: string | undefined
+    while (!value && Date.now() < deadline) {
+      await wait(250)
+      const r = await send("Runtime.evaluate", { expression, returnByValue: true }, sessionId)
+      const v = (r.result?.result as { value?: unknown } | undefined)?.value
+      value = typeof v === "string" && v ? v : undefined
+    }
+    await send("Browser.close").catch(() => {})
+    ws.close()
+    return value
+  } finally {
+    child.kill()
+  }
+}
