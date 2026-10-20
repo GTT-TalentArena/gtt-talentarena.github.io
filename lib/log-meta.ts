@@ -7,6 +7,8 @@ export const logTypes = {
   iteration: { label: "Iteration", description: "A new version of the possession model" },
   data: { label: "Data", description: "Exploring the tracking" },
   decision: { label: "Decision", description: "What we chose for the model, and why" },
+  // la genera sola el workflow publish-pr-log.yml del fork por cada PR fusionado en main
+  change: { label: "Change", description: "A pull request merged in the challenge repo" },
 } as const
 
 export type LogType = keyof typeof logTypes

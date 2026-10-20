@@ -45,7 +45,7 @@
  *  ── Cabecera (frontmatter YAML) ────────────────────────────────────────────────────────────
  *    title:    "Frase corta en inglés"                         (obligatorio)
  *    date:     2026-10-24                                      (obligatorio · día del trabajo)
- *    type:     study | code | experiment | iteration | data | decision     (obligatorio)
+ *    type:     study | code | experiment | iteration | data | decision     (obligatorio; change es automático)
  *    outcome:  success | failure | mixed | open                (obligatorio en experiment e iteration)
  *    authors:  [jimy-k4, hxst1]                                (obligatorio · handles de GitHub de lib/content.ts → squad)
  *    summary:  "Una o dos frases: qué se hizo y qué salió."     (obligatorio · sale en la lista)
@@ -67,6 +67,8 @@
  *    iteration  nueva versión del modelo comparada con la anterior (outcome obligatorio)
  *    data       explorar el tracking: patrones, huecos, cambios de identidad, balón invisible
  *    decision   algo que el equipo decide sobre el modelo o el repo, y por qué (tipo ADR)
+ *    change     AUTOMÁTICA: una por cada PR fusionado en main del fork. La genera y sube el workflow
+ *               .github/workflows/publish-pr-log.yml del fork. No la escribas a mano.
  *
  *  ── Cuerpo (Markdown) ──────────────────────────────────────────────────────────────────────
  *  En inglés (la web está en inglés; el estudio largo en español vive en docs/ del fork).
