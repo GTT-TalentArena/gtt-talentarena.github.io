@@ -69,7 +69,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
               type="button"
               disabled={still}
               aria-expanded={isActive}
-              aria-controls={`player-${p.number}`}
+              aria-controls={`player-${p.number} player-${p.number}-m`}
               onFocus={() => open(p.number)}
               onBlur={close}
               onClick={() => {
@@ -94,10 +94,24 @@ export function Lineup({ still = false }: { still?: boolean }) {
               <span className="label hidden text-[0.58rem] text-muted sm:block">{short[p.position]}</span>
             </button>
 
-            {isActive && !still && <Info player={p} above={y > 20} align={x < 30 ? "left" : x > 38 ? "right" : "center"} />}
+            {isActive && !still && (
+              <Info player={p} placement="anchored" above={y > 20} align={x < 30 ? "left" : x > 38 ? "right" : "center"} />
+            )}
           </div>
         )
       })}
+
+      {/* en móvil la ficha no flota junto al jugador (se saldría de la pantalla): se acopla abajo, a todo el ancho */}
+      {active && !still && (
+        <Info
+          player={squad.find((p) => p.number === active)!}
+          placement="docked"
+          onClose={() => {
+            pinned.current = false
+            setActive(null)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -132,24 +146,51 @@ function Avatar({ player: p, color }: { player: Player; color: boolean }) {
   )
 }
 
-function Info({ player: p, above, align }: { player: Player; above: boolean; align: "left" | "right" | "center" }) {
+function Info({
+  player: p,
+  placement,
+  above = true,
+  align = "center",
+  onClose,
+}: {
+  player: Player
+  placement: "anchored" | "docked"
+  above?: boolean
+  align?: "left" | "right" | "center"
+  onClose?: () => void
+}) {
   const links = [
     { label: "GitHub", href: p.github && `https://github.com/${p.github}` },
     { label: "Web", href: p.portfolio },
     { label: "LinkedIn", href: p.linkedin },
   ].filter((l): l is { label: string; href: string } => Boolean(l.href))
 
-  // relativo al jugador entero (foto + nombre): encima o debajo, sin taparle
+  // anclada: junto al jugador (foto + nombre), encima o debajo sin taparle; solo desde sm
+  // acoplada: abajo del campo y a todo el ancho; solo en móvil
   const x = align === "left" ? "left-0" : align === "right" ? "right-0" : "left-1/2 -translate-x-1/2"
   const y = above ? "bottom-[calc(100%+0.5rem)]" : "top-[calc(100%+0.5rem)]"
+  const position =
+    placement === "anchored" ? `hidden sm:block ${x} ${y} w-64` : "inset-x-2 bottom-2 z-30 sm:hidden"
 
   return (
     <div
-      id={`player-${p.number}`}
+      id={placement === "anchored" ? `player-${p.number}` : `player-${p.number}-m`}
       role="dialog"
       aria-label={`${p.name}, ${p.position}`}
-      className={`absolute ${x} ${y} w-60 rounded-2xl sm:w-64 border border-line bg-paper p-4 text-left shadow-[0_24px_60px_-18px_rgb(11_14_44/0.45)]`}
+      className={`absolute ${position} rounded-2xl border border-line bg-paper p-4 text-left shadow-[0_24px_60px_-18px_rgb(11_14_44/0.45)]`}
     >
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-2 top-2 grid size-9 place-items-center rounded-full text-muted hover:bg-paper-2 hover:text-ink"
+        >
+          <svg viewBox="0 0 12 12" className="size-3" aria-hidden>
+            <path d="M3 3l6 6M9 3 3 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+        </button>
+      )}
       <p className="label text-muted">
         <span className="text-accent">{p.number}</span> — {p.position}
       </p>

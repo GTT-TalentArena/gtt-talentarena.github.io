@@ -8,7 +8,10 @@ export function BallSlot({ frame, scale }: { frame: string; scale: number }) {
     const iframe = document.getElementById(frame) as HTMLIFrameElement | null
     if (!iframe) return
     const measure = () => {
-      const ball = iframe.contentDocument?.querySelector("svg[data-ball]")
+      // el visible: en escritorio, el del anillo (el de móvil está oculto)
+      const ball = [...(iframe.contentDocument?.querySelectorAll("svg[data-ball]") ?? [])].find(
+        (b) => b.getBoundingClientRect().width > 0,
+      )
       if (!ball) return false
       const f = iframe.getBoundingClientRect()
       const b = ball.getBoundingClientRect()

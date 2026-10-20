@@ -43,7 +43,7 @@ export default async function EntryPage({ params }: { params: Params }) {
       <main id="content" className="grain px-4 pb-24 pt-24 sm:px-6 sm:pb-32 lg:px-10">
         <div className="mx-auto max-w-[1440px]">
           <div className="label grid grid-cols-2 gap-y-2 border-b border-line pb-3 text-muted sm:grid-cols-3">
-            <Link href="/log" className="hover:text-ink">
+            <Link href="/log" className="-my-3 inline-block self-start py-3 hover:text-ink">
               ← The log
             </Link>
             <span className="text-right sm:text-center">

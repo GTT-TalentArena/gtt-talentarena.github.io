@@ -13,13 +13,13 @@ export function Footer() {
           <Logo size="1.5rem" />
         </span>
         <nav aria-label="Footer" className="flex gap-5">
-          <Link href="/" className="hover:text-paper">
+          <Link href="/" className="-mx-2 -my-3 inline-block px-2 py-3 hover:text-paper">
             Team
           </Link>
-          <Link href="/log" className="hover:text-paper">
+          <Link href="/log" className="-mx-2 -my-3 inline-block px-2 py-3 hover:text-paper">
             Log
           </Link>
-          <a href="#content" className="hover:text-paper">
+          <a href="#content" className="-mx-2 -my-3 inline-block px-2 py-3 hover:text-paper">
             Top ↑
           </a>
         </nav>

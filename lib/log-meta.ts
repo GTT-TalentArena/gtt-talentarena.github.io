@@ -1,12 +1,12 @@
-/** Tipos y etiquetas del log, sin acceso a disco (se pueden usar en el navegador). Ver lib/log.ts. */
+/** Tipos y etiquetas del log del modelo de posesión, sin acceso a disco (se pueden usar en el navegador). Ver lib/log.ts. */
 
 export const logTypes = {
-  study: { label: "Study", description: "Reading, research, notes" },
-  code: { label: "Code", description: "Tools, infrastructure, refactors" },
-  experiment: { label: "Experiment", description: "A hypothesis, tested" },
-  iteration: { label: "Iteration", description: "A new version of the model" },
+  study: { label: "Study", description: "Papers, state of the art, the challenge itself" },
+  code: { label: "Code", description: "Pipeline and tooling in the challenge repo" },
+  experiment: { label: "Experiment", description: "A hypothesis about the model, tested" },
+  iteration: { label: "Iteration", description: "A new version of the possession model" },
   data: { label: "Data", description: "Exploring the tracking" },
-  decision: { label: "Decision", description: "What we chose, and why" },
+  decision: { label: "Decision", description: "What we chose for the model, and why" },
 } as const
 
 export type LogType = keyof typeof logTypes

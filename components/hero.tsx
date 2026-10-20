@@ -2,6 +2,7 @@ import { hero, now, site } from "@/lib/content"
 import { Clock } from "@/components/clock"
 import { Countdown } from "@/components/countdown"
 import { BallBadge } from "@/components/ball-badge"
+import { DataBall } from "@/components/data-ball"
 import { ButtonGhost, ButtonPrimary } from "@/components/buttons"
 
 export function Hero() {
@@ -13,7 +14,9 @@ export function Hero() {
         {/* name + motto */}
         <div className="relative flex flex-1 flex-col justify-center py-8 sm:py-10">
           <Lockup />
-          <BallBadge className="absolute right-0 top-[40%] hidden size-56 -translate-y-1/2 lg:block xl:size-64" />
+          <BallBadge className="absolute right-0 top-[40%] hidden size-44 -translate-y-1/2 sm:block lg:size-56 xl:size-64" />
+          {/* en móvil, solo el balón (el texto del anillo no se leería): a la derecha de «GTT» */}
+          <DataBall className="absolute right-0 top-7 size-[26vw] text-ink sm:hidden" />
         </div>
 
         {/* bottom row */}

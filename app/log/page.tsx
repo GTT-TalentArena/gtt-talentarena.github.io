@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { fixtures, now } from "@/lib/content"
+import { fixtures, now, site } from "@/lib/content"
 import { getEntries, logTypes, shortDate, weekStart, type LogEntry, type LogType } from "@/lib/log"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -9,7 +9,8 @@ import { Chronology, TypeFilter } from "@/components/log/chronology"
 
 export const metadata: Metadata = {
   title: "Log",
-  description: "Every study, test and iteration GTT makes on the way to the Final Pitch — the ones that worked and the ones that didn't.",
+  description:
+    "GTT's notebook on the possession model: what we study, the improvements we find and the tests we run in our fork of the challenge — the ones that worked and the ones that didn't.",
 }
 
 const KICKOFF = fixtures[0].start
@@ -48,7 +49,7 @@ export default function LogPage() {
                 {entries.length} {entries.length === 1 ? "entry" : "entries"}
                 {last && <> · updated {shortDate(last)}</>}
               </span>
-              <span className="hidden text-right sm:block">Studies · Code · Experiments</span>
+              <span className="hidden text-right sm:block">The possession model</span>
             </div>
 
             <h1 className="font-display-tight mt-10 text-[clamp(4.5rem,calc(19vw*var(--display-scale)),calc(17rem*var(--display-scale)))]">
@@ -56,23 +57,36 @@ export default function LogPage() {
             </h1>
 
             <div className="mt-8 grid gap-8 border-t border-ink pt-6 md:grid-cols-12 md:gap-6">
-              <p className="text-balance text-xl leading-snug sm:text-2xl md:col-span-6 lg:col-span-5">
-                Every study, test and iteration on the way to the Final Pitch —{" "}
-                <span className="accent [--accent-base:1.15em]">the ones that worked and the ones that didn&apos;t.</span> In
-                order.
-              </p>
+              <div className="md:col-span-6 lg:col-span-5">
+                <p className="text-balance text-xl leading-snug sm:text-2xl">
+                  Our notebook on the possession model: what we study, the improvements we find and the tests we run —{" "}
+                  <span className="accent [--accent-base:1.15em]">the ones that worked and the ones that didn&apos;t.</span>
+                </p>
+                <p className="mt-5 text-pretty leading-relaxed text-muted">
+                  The work itself happens in{" "}
+                  <a
+                    href={site.repo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-ink underline decoration-accent decoration-2 underline-offset-4"
+                  >
+                    our fork of the challenge
+                  </a>
+                  : rules, possession changes, temporal continuity, hysteresis, minimum duration and smoothing.
+                </p>
+              </div>
               <dl className="grid grid-cols-3 gap-4 rounded-2xl border border-line bg-paper-2/70 p-5 md:col-span-5 md:col-start-8 lg:col-span-4 lg:col-start-9">
-                <div>
+                <div className="flex flex-col justify-between gap-1">
                   <dt className="label text-muted">Entries</dt>
                   <dd className="mt-1 font-mono text-2xl tabular-nums">{entries.length}</dd>
                 </div>
-                <div>
+                <div className="flex flex-col justify-between gap-1">
                   <dt className="label text-muted">Tests ✓ / ✕</dt>
                   <dd className="mt-1 font-mono text-2xl tabular-nums">
                     {ok} / {ko}
                   </dd>
                 </div>
-                <div>
+                <div className="flex flex-col justify-between gap-1">
                   <dt className="label text-muted">Best spellF1</dt>
                   <dd className="mt-1 font-mono text-2xl tabular-nums">{best !== undefined ? best.toFixed(4) : "—"}</dd>
                 </div>

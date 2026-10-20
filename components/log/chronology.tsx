@@ -92,7 +92,7 @@ export function Chronology({ dots, milestones, from, to }: { dots: Dot[]; milest
             key={d.slug}
             href={`#${d.slug}`}
             title={`${shortDate(d.date)} · ${logTypes[d.type].label} · ${d.title}`}
-            className={`absolute size-3 -translate-x-1/2 rounded-full transition-transform hover:scale-150 ${tone[d.outcome ?? "none"]}`}
+            className={`absolute size-3 -translate-x-1/2 rounded-full transition-transform before:absolute before:-inset-2 before:content-[''] hover:scale-150 ${tone[d.outcome ?? "none"]}`}
             style={{ left: x(d.date), bottom: `${1.4 + d.level * 1}rem` }}
           >
             <span className="sr-only">{d.title}</span>
@@ -155,7 +155,7 @@ export function TypeFilter({ counts }: { counts: Partial<Record<LogType, number>
           aria-pressed={active === o.id}
           disabled={o.n === 0}
           onClick={() => setActive(o.id)}
-          className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors disabled:opacity-35 ${
+          className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors disabled:opacity-35 max-sm:disabled:hidden ${
             active === o.id ? "border-ink bg-ink text-paper" : "border-ink/20 hover:border-ink"
           }`}
         >

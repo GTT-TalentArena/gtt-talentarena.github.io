@@ -11,12 +11,14 @@ GitHub de la organización.
 | Ruta | Qué es |
 | :-- | :-- |
 | `/` | Portada («Team»): reto, plantilla en 1-2-2, enfoque y calendario, con su propio índice de secciones |
-| `/log` | El cuaderno del equipo: estudios, código, experimentos, iteraciones, datos y decisiones, en orden |
+| `/log` | El cuaderno del modelo de posesión: estudios, mejoras y pruebas sobre el fork del reto, en orden |
 | `/previews/*` | Lienzos para las imágenes del README de la organización (no se indexan) |
 
 ## Añadir una entrada al log
 
-Sin CMS: un fichero Markdown por entrada en [`content/log/`](content/log). Copia
+El log registra el trabajo sobre el **modelo de posesión** en el repo principal del proyecto
+([`GTT-TalentArena/more-than-a-hack-2027`](https://github.com/GTT-TalentArena/more-than-a-hack-2027)), **no** los
+cambios de esta web, que van en los commits de este repositorio. Sin CMS: un fichero Markdown por entrada en [`content/log/`](content/log). Copia
 [`_template.md`](content/log/_template.md) y sigue las instrucciones del principio de [`lib/log.ts`](lib/log.ts)
 (también en [`AGENTS.md`](AGENTS.md), para que las lean los LLMs del equipo). Push a `main` y está publicado.
 

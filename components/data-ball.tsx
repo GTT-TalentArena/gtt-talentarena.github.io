@@ -155,12 +155,19 @@ export function DataBall({ className = "", still = false }: { className?: string
       } catch {}
     }
 
+    // si el navegador se queda el gesto (el dedo hace scroll), se suelta el balón sin chutarlo
+    const onCancel = () => {
+      drag = null
+      w = [...idle]
+      el.style.cursor = ""
+    }
+
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting))
     io.observe(el)
     el.addEventListener("pointerdown", onDown)
     el.addEventListener("pointermove", onMove)
     el.addEventListener("pointerup", onUp)
-    el.addEventListener("pointercancel", onUp)
+    el.addEventListener("pointercancel", onCancel)
     raf = requestAnimationFrame(frame)
     return () => {
       cancelAnimationFrame(raf)
@@ -168,7 +175,7 @@ export function DataBall({ className = "", still = false }: { className?: string
       el.removeEventListener("pointerdown", onDown)
       el.removeEventListener("pointermove", onMove)
       el.removeEventListener("pointerup", onUp)
-      el.removeEventListener("pointercancel", onUp)
+      el.removeEventListener("pointercancel", onCancel)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [still])
@@ -178,7 +185,7 @@ export function DataBall({ className = "", still = false }: { className?: string
       ref={svg}
       data-ball
       viewBox="-1.12 -1.12 2.24 2.24"
-      className={`${still ? "" : "cursor-grab touch-none select-none"} ${className}`}
+      className={`${still ? "" : "cursor-grab touch-pan-y select-none"} ${className}`}
       role={still ? undefined : "img"}
       aria-hidden={still || undefined}
       aria-label={still ? undefined : "The GTT ball. Drag it or click it to kick it."}
