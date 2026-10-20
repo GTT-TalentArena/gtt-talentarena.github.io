@@ -115,6 +115,9 @@ async function readFromPage(url: string, expression: string, timeoutMs = 30_000)
     "--no-first-run",
     "--no-default-browser-check",
     `--user-data-dir=${dir}`,
+    // igual que en las capturas: sin barras de scroll (si no, el iframe pierde ~15 px de ancho
+    // y todo lo alineado a la derecha, como el balón, se mide desplazado respecto a la captura)
+    "--hide-scrollbars",
     "--remote-debugging-port=0",
     "--window-size=1280,800",
     "about:blank",
