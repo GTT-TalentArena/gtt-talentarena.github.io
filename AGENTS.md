@@ -18,8 +18,9 @@ En resumen:
 
 ## Otras piezas
 
-- Textos: [`lib/content.ts`](lib/content.ts). Plantilla y roles: `squad` (rol vacío = «Pending»).
-- Tipografía: [`lib/typesets.ts`](lib/typesets.ts) y `app/globals.css` (`[data-type]`). Una sola en toda la web.
+- Textos: [`lib/content.ts`](lib/content.ts). Plantilla: `squad` (rol vacío = «Pending»; `position` y `spot` para el 1-2-2).
+- Navegación: la barra solo cambia de vista (Team, Log); las secciones de la portada usan `components/section-index.tsx`.
+- Tipografía: una sola en toda la web, en [`lib/fonts.ts`](lib/fonts.ts).
 - Simulación del campo: [`lib/pitch-sim.ts`](lib/pitch-sim.ts) (inventada; no usa datos del partido).
 - Balón: [`lib/ball.ts`](lib/ball.ts) + [`components/data-ball.tsx`](components/data-ball.tsx).
 - Imágenes del README de la organización: `npm run previews` (ver README.md).

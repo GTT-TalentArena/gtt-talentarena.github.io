@@ -1,17 +1,15 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { apply, facePaths, faces, fromSpinTilt, mul, orthonormalize, rotation, vertices, type M } from "@/lib/ball"
+import { BALL_START, BALL_TILT, apply, facePaths, faces, fromSpinTilt, mul, orthonormalize, rotation, vertices, type M } from "@/lib/ball"
 
 type V = [number, number, number]
 
-const TILT = 0.42
-const START = 0.55
 /** Giro tranquilo cuando nadie lo toca (rad/s, ejes de pantalla). */
 const IDLE: V = [0, 0.32, 0]
 const MAX_SPIN = 28
 const KICK_SPIN = 11
-const KICK_PUSH = 320
+const KICK_PUSH = 460
 
 /**
  * El balón de GTT: un icosaedro truncado dibujado como una malla de datos. Pentágonos en
@@ -27,7 +25,7 @@ export function DataBall({ className = "", still = false }: { className?: string
   const front = useRef<(SVGPathElement | null)[]>([])
   const nodes = useRef<(SVGCircleElement | null)[]>([])
 
-  const initial = fromSpinTilt(START, TILT)
+  const initial = fromSpinTilt(BALL_START, BALL_TILT)
   const points = apply(initial)
   const paths = facePaths(points)
 
@@ -178,6 +176,7 @@ export function DataBall({ className = "", still = false }: { className?: string
   return (
     <svg
       ref={svg}
+      data-ball
       viewBox="-1.12 -1.12 2.24 2.24"
       className={`${still ? "" : "cursor-grab touch-none select-none"} ${className}`}
       role={still ? undefined : "img"}

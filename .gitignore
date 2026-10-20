@@ -9,3 +9,5 @@ next-env.d.ts
 .claude
 # vista previa local del README de la organización (no se publica)
 public/__readme
+# capturas intermedias de scripts/previews.ts
+.cache

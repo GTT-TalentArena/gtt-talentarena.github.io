@@ -25,7 +25,7 @@
   --color-away: #ff4f8a;
   --color-ball: #e8ff2e;
 
-  /* Tipografía: las cuatro las fija la combinación activa (ver más abajo y lib/typesets.ts) */
+  /* Tipografía (lib/fonts.ts) */
   --font-sans: var(--f-geist), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--f-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--f-instrument), ui-serif, Georgia, serif;
@@ -51,7 +51,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 7.5rem;
     -webkit-text-size-adjust: 100%;
   }
   body {
@@ -76,21 +76,15 @@
   }
 }
 
-/* ─── Combinaciones tipográficas (ver lib/typesets.ts) ─────────────
-   display-*: titulares · accent-*: la palabra que cambia el tono      */
-:where(:root),
-[data-type="actual"] {
-  --font-sans: var(--f-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--f-bricolage), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--f-instrument), ui-serif, Georgia, serif;
-  --font-mono: var(--f-geist-mono), ui-monospace, monospace;
+/* ─── Tipografía: ajustes de los titulares y de la palabra de acento ─── */
+:root {
   --body-features: "ss01", "cv11";
   --display-weight: 650;
   --display-wdth: 88;
   --display-opsz: 96;
-  --display-rond: 0;
   --display-tracking: -0.045em;
   --display-leading: 0.86;
+  /* ajusta los titulares gigantes al ancho de la tipografía */
   --display-scale: 1;
   --accent-style: italic;
   --accent-weight: 400;
@@ -98,165 +92,10 @@
   --accent-scale: 1;
 }
 
-/* Un bloque con data-type (html o una muestra de /type) vuelve a resolver su tipografía */
-[data-type] {
-  font-family: var(--font-sans);
-  font-feature-settings: var(--body-features, normal);
-}
-/* Base común del resto de combinaciones; especificidad cero para que cada una la pise */
-:where([data-type]:not([data-type="actual"])) {
-  --body-features: normal;
-  --display-wdth: 100;
-  --display-opsz: 72;
-  --display-rond: 0;
-  --accent-style: italic;
-  --accent-weight: 400;
-  --accent-tracking: -0.01em;
-}
-
-[data-type="graderia"] {
-  --font-display: var(--f-big-shoulders), sans-serif;
-  --font-serif: var(--f-libre-caslon), serif;
-  --font-sans: var(--f-figtree), sans-serif;
-  --font-mono: var(--f-jetbrains), monospace;
-  --display-weight: 800;
-  --display-tracking: -0.005em;
-  --display-leading: 0.84;
-  --display-scale: 1.06;
-  --accent-scale: 0.94;
-}
-
-[data-type="pissarra"] {
-  --font-display: var(--f-gabarito), sans-serif;
-  --font-serif: var(--f-marker), cursive;
-  --font-sans: var(--f-work-sans), sans-serif;
-  --font-mono: var(--f-martian), monospace;
-  --display-weight: 800;
-  --display-tracking: -0.045em;
-  --display-leading: 0.88;
-  --display-scale: 0.92;
-  --accent-style: normal;
-  --accent-tracking: 0;
-  --accent-scale: 0.88;
-}
-
-[data-type="marcador"] {
-  --font-display: var(--f-doto), monospace;
-  --font-serif: var(--f-literata), serif;
-  --font-sans: var(--f-onest), sans-serif;
-  --font-mono: var(--f-azeret), monospace;
-  --display-weight: 900;
-  --display-rond: 100;
-  --display-tracking: -0.02em;
-  --display-leading: 0.9;
-  --display-scale: 0.8;
-  --accent-weight: 500;
-  --accent-scale: 1;
-}
-
-[data-type="champions"] {
-  --font-display: var(--f-unbounded), sans-serif;
-  --font-serif: var(--f-cormorant), serif;
-  --font-sans: var(--f-manrope), sans-serif;
-  --font-mono: var(--f-plex-mono), monospace;
-  --display-weight: 700;
-  --display-tracking: -0.04em;
-  --display-leading: 0.92;
-  --display-scale: 0.68;
-  --accent-weight: 500;
-  --accent-scale: 1.18;
-}
-
-[data-type="gol"] {
-  --font-display: var(--f-dela), sans-serif;
-  --font-serif: var(--f-caveat), cursive;
-  --font-sans: var(--f-jakarta), sans-serif;
-  --font-mono: var(--f-kode), monospace;
-  --display-weight: 400;
-  --display-tracking: -0.03em;
-  --display-leading: 0.95;
-  --display-scale: 0.72;
-  --accent-style: normal;
-  --accent-weight: 700;
-  --accent-tracking: 0;
-  --accent-scale: 1.22;
-}
-
-[data-type="cruyff"] {
-  --font-display: var(--f-bowlby), sans-serif;
-  --font-serif: var(--f-shrikhand), cursive;
-  --font-sans: var(--f-karla), sans-serif;
-  --font-mono: var(--f-courier), monospace;
-  --display-weight: 400;
-  --display-tracking: -0.02em;
-  --display-leading: 0.92;
-  --display-scale: 0.74;
-  --accent-style: normal;
-  --accent-tracking: 0;
-  --accent-scale: 0.92;
-}
-
-[data-type="quadern"] {
-  --font-display: var(--f-chivo-mono), monospace;
-  --font-serif: var(--f-chivo-mono), monospace;
-  --font-sans: var(--f-chivo), sans-serif;
-  --font-mono: var(--f-chivo-mono), monospace;
-  --display-weight: 800;
-  --display-tracking: -0.07em;
-  --display-leading: 0.92;
-  --display-scale: 0.66;
-  --accent-weight: 300;
-  --accent-tracking: -0.06em;
-  --accent-scale: 1;
-}
-
-[data-type="eixample"] {
-  --font-display: var(--f-familjen), sans-serif;
-  --font-serif: var(--f-spectral), serif;
-  --font-sans: var(--f-public-sans), sans-serif;
-  --font-mono: var(--f-fragment), monospace;
-  --display-weight: 700;
-  --display-tracking: -0.05em;
-  --display-leading: 0.88;
-  --display-scale: 0.96;
-  --accent-scale: 1.02;
-}
-
-[data-type="diari"] {
-  --font-display: var(--f-league-gothic), sans-serif;
-  --font-serif: var(--f-crimson), serif;
-  --font-sans: var(--f-crimson), serif;
-  --font-mono: var(--f-cutive), monospace;
-  --display-weight: 400;
-  --display-tracking: 0;
-  --display-leading: 0.86;
-  --display-scale: 1.1;
-  --accent-weight: 500;
-  --accent-scale: 1.04;
-}
-
-[data-type="llotja"] {
-  --font-display: var(--f-bodoni), serif;
-  --font-serif: var(--f-bodoni), serif;
-  --font-sans: var(--f-albert), sans-serif;
-  --font-mono: var(--f-dm-mono), monospace;
-  --display-weight: 800;
-  --display-opsz: 96;
-  --display-tracking: -0.035em;
-  --display-leading: 0.88;
-  --display-scale: 0.86;
-  --accent-weight: 500;
-  --accent-tracking: -0.02em;
-  --accent-scale: 1;
-}
-
 @utility font-display-tight {
   font-family: var(--font-display);
   font-weight: var(--display-weight);
-  font-variation-settings:
-    "wdth" var(--display-wdth),
-    "opsz" var(--display-opsz),
-    "ROND" var(--display-rond);
+  font-variation-settings: "wdth" var(--display-wdth), "opsz" var(--display-opsz);
   letter-spacing: var(--display-tracking);
   line-height: var(--display-leading);
 }
@@ -335,7 +174,7 @@
   & h2 {
     font-family: var(--font-display);
     font-weight: var(--display-weight);
-    font-variation-settings: "wdth" var(--display-wdth), "opsz" var(--display-opsz), "ROND" var(--display-rond);
+    font-variation-settings: "wdth" var(--display-wdth), "opsz" var(--display-opsz);
     font-size: calc(2rem * var(--display-scale));
     letter-spacing: var(--display-tracking);
     line-height: 1;
@@ -412,9 +251,10 @@
   to { transform: none; }
 }
 
-/* ?still: capturas de las previews, con todo ya en su sitio */
+/* ?still / ?noball: capturas de las previews (ver app/layout.tsx) */
 .still .rise { animation: none; }
 .still .grain::after { display: none; }
+.noball [data-ball] { visibility: hidden; }
 .still [data-reveal] { opacity: 1 !important; transform: none !important; transition: none; }
 
 @media (prefers-reduced-motion: reduce) {

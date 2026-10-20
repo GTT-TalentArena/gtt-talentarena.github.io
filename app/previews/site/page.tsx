@@ -1,8 +1,14 @@
 import { site } from "@/lib/content"
+import { BallSlot } from "./ball-slot"
 
-/** La web dentro de una ventana de navegador, para el README: 1280×800. */
+const SCALE = 1180 / 1440
+
+/**
+ * La web dentro de una ventana de navegador, para el README: 1280×800.
+ * La portada se carga sin balón (?noball): scripts/readme-svg.ts lo dibuja encima, animado,
+ * en la posición que BallSlot deja apuntada en <body data-ball="x,y,ancho,alto">.
+ */
 export default function SitePreview() {
-  const scale = 1180 / 1440
   return (
     <div className="grid h-[800px] w-[1280px] place-items-center bg-paper-2">
       <div className="overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_40px_80px_-30px_rgb(0_0_0/0.35)]">
@@ -17,16 +23,18 @@ export default function SitePreview() {
           </span>
           <span className="w-12" />
         </div>
-        <div style={{ width: 1440 * scale, height: 860 * scale }} className="overflow-hidden">
+        <div style={{ width: 1440 * SCALE, height: 860 * SCALE }} className="overflow-hidden">
           <iframe
-            src="/?still"
+            id="site-frame"
+            src="/?still&noball"
             title="GTT website"
             width={1440}
             height={860}
-            style={{ transform: `scale(${scale})`, transformOrigin: "0 0", border: 0 }}
+            style={{ transform: `scale(${SCALE})`, transformOrigin: "0 0", border: 0 }}
           />
         </div>
       </div>
+      <BallSlot frame="site-frame" scale={SCALE} />
     </div>
   )
 }

@@ -153,3 +153,7 @@ export function facePaths(p: V[]) {
     return { d, front: z > 0, face: f }
   })
 }
+
+/** Postura de partida del balón (la misma en la web y en los SVG del README). */
+export const BALL_TILT = 0.42
+export const BALL_START = 0.55

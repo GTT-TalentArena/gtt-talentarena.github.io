@@ -68,21 +68,30 @@ export const challenge = {
   ],
 }
 
+export type Position = "Goalkeeper" | "Defender" | "Forward"
+
 export type Player = {
   number: string
   name: string
   /** Los roles están sujetos a cambios: vacío = «Pending». */
   role: string
+  /** Formación 1-2-2 en medio campo (propuesta de Alejandro). */
+  position: Position
+  /** Sitio en el medio campo, en metros: x desde la banda izquierda (0–68), y desde el medio campo (0–52.5). */
+  spot: [number, number]
   github?: string
   portfolio?: string
   linkedin?: string
 }
 
+// 1-2-2: Alejandro en la portería; Nico y Jimy atrás; Edu y Pablo arriba.
 export const squad: Player[] = [
   {
     number: "01",
     name: "Jimy",
     role: "",
+    position: "Defender",
+    spot: [48, 31],
     github: "jimy-k4",
     portfolio: "https://jimy-portfolio.vercel.app/en",
     linkedin: "https://www.linkedin.com/in/juan-llinares-mauri",
@@ -91,6 +100,8 @@ export const squad: Player[] = [
     number: "02",
     name: "Edu",
     role: "",
+    position: "Forward",
+    spot: [22, 13],
     github: "hxst1",
     portfolio: "https://edu-ruiz-portfolio.vercel.app/",
     linkedin: "https://www.linkedin.com/in/edu-ruiz-cantos",
@@ -99,6 +110,8 @@ export const squad: Player[] = [
     number: "03",
     name: "Alejandro",
     role: "",
+    position: "Goalkeeper",
+    spot: [34, 45.5],
     github: "AlejandroMolines",
     linkedin: "https://www.linkedin.com/in/alejandro-molines-00524822b/",
   },
@@ -106,6 +119,8 @@ export const squad: Player[] = [
     number: "04",
     name: "Nico",
     role: "",
+    position: "Defender",
+    spot: [20, 31],
     github: "n1co2611",
     portfolio: "https://nicolashidalgo.es/",
     linkedin: "https://www.linkedin.com/in/nicolashidalgosalinas/",
@@ -114,6 +129,8 @@ export const squad: Player[] = [
     number: "05",
     name: "Pablo",
     role: "",
+    position: "Forward",
+    spot: [46, 13],
   },
 ]
 

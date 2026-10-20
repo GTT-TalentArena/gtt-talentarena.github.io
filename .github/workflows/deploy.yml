@@ -28,9 +28,6 @@ jobs:
       - run: npm ci
       # Valida también las cabeceras del log: si una está mal, el build falla con «[log] …»
       - run: npm run build
-        env:
-          # Hasta elegir tipografía se ve el selector; al lanzar, pon "1"
-          NEXT_PUBLIC_LAUNCHED: ""
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

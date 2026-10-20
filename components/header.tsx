@@ -6,13 +6,16 @@ import { useEffect, useState } from "react"
 import { site } from "@/lib/content"
 import { Arrow, Dot } from "@/components/icons"
 
+// La barra solo cambia de vista. Las secciones de la portada tienen su propio índice (section-index.tsx).
 const links = [
-  { href: "/#challenge", label: "Challenge" },
-  { href: "/#squad", label: "Squad" },
-  { href: "/#approach", label: "Approach" },
-  { href: "/#fixtures", label: "Fixtures" },
+  { href: "/", label: "Team" },
   { href: "/log", label: "Log" },
 ]
+
+const isCurrent = (pathname: string, href: string) => {
+  const p = pathname.replace(/\/$/, "") || "/"
+  return href === "/" ? p === "/" : p === href || p.startsWith(`${href}/`)
+}
 
 export function Logo({ size = "1.9rem" }: { size?: string }) {
   return (
@@ -61,7 +64,7 @@ export function Header() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  aria-current={pathname.startsWith(l.href) ? "page" : undefined}
+                  aria-current={isCurrent(pathname, l.href) ? "page" : undefined}
                   className="block rounded-full px-4 py-1.5 text-sm text-ink/75 transition-colors hover:bg-ink hover:text-paper aria-[current=page]:bg-ink aria-[current=page]:text-paper"
                 >
                   {l.label}

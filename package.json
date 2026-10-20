@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "typecheck": "next typegen && tsc --noEmit",
-    "previews": "node scripts/pitch-svg.ts && node scripts/previews.ts",
+    "previews": "node scripts/previews.ts",
     "serve": "node scripts/serve.ts"
   },
   "dependencies": {

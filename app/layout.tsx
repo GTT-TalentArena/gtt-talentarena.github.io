@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { site } from "@/lib/content"
 import { fontVariables } from "@/lib/fonts"
-import { isLaunched } from "@/lib/launch"
-import { defaultType, typesets, typeStorageKey } from "@/lib/typesets"
-import { TypeSwitcher } from "@/components/type-switcher"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -24,17 +21,13 @@ export const viewport: Viewport = {
   themeColor: "#f3eee6",
 }
 
-// Antes de pintar: marca que hay JS (y ?still para capturas sin animación de entrada) y,
-// mientras se elige tipografía, aplica la de ?type= o la guardada.
-const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');if(/[?&]still/.test(location.search))d.classList.add('still');${
-  isLaunched
-    ? ""
-    : `try{var ok=${JSON.stringify(typesets.map((t) => t.id))};var q=new URLSearchParams(location.search).get('type');var k=${JSON.stringify(typeStorageKey)};if(q&&ok.indexOf(q)>-1){localStorage.setItem(k,q)}var t=localStorage.getItem(k);if(t&&ok.indexOf(t)>-1){d.setAttribute('data-type',t)}}catch(e){}`
-}})()`
+// Antes de pintar: marca que hay JS. Para las capturas del README (scripts/previews.ts):
+// ?still quita las animaciones de entrada y ?noball esconde el balón (se dibuja aparte, animado).
+const bootScript = `(function(){var d=document.documentElement,q=location.search;d.classList.add('js');if(/[?&]still/.test(q))d.classList.add('still');if(/[?&]noball/.test(q))d.classList.add('noball')})()`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-type={defaultType} className={fontVariables} suppressHydrationWarning>
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
@@ -46,7 +39,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {children}
-        {!isLaunched && <TypeSwitcher />}
       </body>
     </html>
   )

@@ -10,9 +10,8 @@ GitHub de la organización.
 
 | Ruta | Qué es |
 | :-- | :-- |
-| `/` | Portada: equipo, reto, enfoque y calendario |
+| `/` | Portada («Team»): reto, plantilla en 1-2-2, enfoque y calendario, con su propio índice de secciones |
 | `/log` | El cuaderno del equipo: estudios, código, experimentos, iteraciones, datos y decisiones, en orden |
-| `/type` | Las 10 tipografías candidatas sobre componentes reales (se borra al elegir) |
 | `/previews/*` | Lienzos para las imágenes del README de la organización (no se indexan) |
 
 ## Añadir una entrada al log
@@ -26,12 +25,21 @@ Sin CMS: un fichero Markdown por entrada en [`content/log/`](content/log). Copia
 Todo el texto está en [`lib/content.ts`](lib/content.ts). Los roles de la plantilla están vacíos («Pending») hasta
 que se definan.
 
-## Tipografía
+## Navegación
 
-Equipación única: **Casa** (papel, tinta azul noche y blaugrana). La tipografía está por elegir: diez combinaciones
-en [`lib/typesets.ts`](lib/typesets.ts), con sus ajustes en `app/globals.css` (`[data-type]`). Hasta el lanzamiento
-hay un selector flotante y se puede enlazar una con `?type=marcador`. Al elegir: pon su id en `defaultType`, borra el
-resto (y la vista `/type`) y pon `NEXT_PUBLIC_LAUNCHED: "1"` en el workflow.
+La barra de arriba solo cambia de vista (**Team** y **Log**). Las secciones de la portada tienen su propio índice
+fijo bajo la cabecera ([`components/section-index.tsx`](components/section-index.tsx)): cada sitio hace una sola cosa.
+
+## Identidad
+
+Equipación **Casa** (papel, tinta azul noche y blaugrana) y una sola tipografía en todas las vistas: Bricolage
+Grotesque, Instrument Serif cursiva, Geist y Geist Mono ([`lib/fonts.ts`](lib/fonts.ts)).
+
+## La plantilla
+
+Medio campo con la formación **1-2-2** ([`components/lineup.tsx`](components/lineup.tsx)): cada jugador tiene su
+`position` y su `spot` (en metros) en [`lib/content.ts`](lib/content.ts). Al pasar el ratón, enfocar o tocar un
+jugador se abre su ficha con los enlaces.
 
 ## El campo y el balón
 
@@ -49,8 +57,12 @@ npm run serve                                   # sirve ./out en http://localhos
 npm run previews -- http://localhost:4173       # en otra terminal
 ```
 
-Genera `pitch.svg` (animación que GitHub sí reproduce) y captura con Edge/Chrome headless los PNG en
-`../.github/profile/assets` y `../.github/brand`, además de `app/opengraph-image.png`.
+Genera, en `../.github/profile/assets` y `../.github/brand`:
+
+- `pitch.svg`, `banner.svg` y `site.svg`: **SVG animados** (fuentes embebidas + SMIL) que GitHub reproduce en el
+  README. El balón rueda y el anillo gira; con «Reducir movimiento» se quedan quietos. Pide las fuentes a Google
+  Fonts, así que necesita red.
+- Capturas PNG con Edge/Chrome headless: plantilla, avatar, social previews y `app/opengraph-image.png`.
 
 ## Desarrollo
 

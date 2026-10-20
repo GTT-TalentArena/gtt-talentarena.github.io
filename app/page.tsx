@@ -1,5 +1,6 @@
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
+import { SectionIndex } from "@/components/section-index"
 import { Marquee } from "@/components/marquee"
 import { Challenge } from "@/components/challenge"
 import { Squad } from "@/components/squad"
@@ -15,6 +16,7 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
+        <SectionIndex />
         <Marquee items={disciplines} />
         <Challenge />
         <Squad />

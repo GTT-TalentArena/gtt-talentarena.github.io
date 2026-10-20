@@ -13,11 +13,11 @@ export function Footer() {
           <Logo size="1.5rem" />
         </span>
         <nav aria-label="Footer" className="flex gap-5">
-          <Link href="/#challenge" className="hover:text-paper">
-            Challenge
+          <Link href="/" className="hover:text-paper">
+            Team
           </Link>
-          <Link href="/#squad" className="hover:text-paper">
-            Squad
+          <Link href="/log" className="hover:text-paper">
+            Log
           </Link>
           <a href="#content" className="hover:text-paper">
             Top ↑
