@@ -16,7 +16,8 @@ cuaderno, y va aparte, en `docs/` del fork: el log solo resume lo que sale de é
 En resumen:
 
 1. Copia [`content/log/_template.md`](content/log/_template.md) a `content/log/AAAA-MM-DD-slug-en-ingles.md`.
-2. Rellena la cabecera YAML (`title`, `date`, `type`, `outcome`, `authors`, `summary`, `metrics`, `tags`, `links`).
+2. Rellena la cabecera YAML (`title`, `date`, `type`, `outcome`, `authors`, `summary`, `model`, `version`, `metrics`, `tags`, `links`).
+   Cada métrica con `model` y `version` es un punto de la gráfica de resultados de `/log`.
 3. Escribe el cuerpo en inglés: `## Context`, `## What we did`, `## Result`, `## Next`.
 4. Nunca pegues datos del partido ni nada que permita reconstruirlos (RULES.md del reto).
 5. `npm run build`: si la cabecera está mal, falla con un mensaje `[log] …` que dice qué arreglar.

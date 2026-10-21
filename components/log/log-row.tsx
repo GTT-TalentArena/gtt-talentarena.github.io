@@ -4,7 +4,15 @@ import { Arrow } from "@/components/icons"
 import { Authors, MetricPill, OutcomeChip, TypeChip } from "@/components/log/parts"
 
 /** Una entrada del log en la lista: fecha, chips, título, resumen y métricas. */
-export function LogRow({ entry: e, anchor = false }: { entry: LogEntry; anchor?: boolean }) {
+export function LogRow({
+  entry: e,
+  anchor = false,
+  colors = {},
+}: {
+  entry: LogEntry
+  anchor?: boolean
+  colors?: Record<string, string>
+}) {
   const d = new Date(`${e.date}T12:00:00Z`)
   return (
     <Link
@@ -33,7 +41,7 @@ export function LogRow({ entry: e, anchor = false }: { entry: LogEntry; anchor?:
         {e.metrics.length > 0 && (
           <span className="mt-4 flex flex-wrap gap-2">
             {e.metrics.map((m) => (
-              <MetricPill key={m.name + m.split} m={m} />
+              <MetricPill key={m.name + m.split + m.model + m.version} m={m} color={m.model && colors[m.model]} />
             ))}
           </span>
         )}

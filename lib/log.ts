@@ -49,12 +49,26 @@
  *    outcome:  success | failure | mixed | open                (obligatorio en experiment e iteration)
  *    authors:  [jimy-k4, hxst1]                                (obligatorio · handles de GitHub de lib/content.ts → squad)
  *    summary:  "Una o dos frases: qué se hizo y qué salió."     (obligatorio · sale en la lista)
+ *    model:    hmm-viterbi                                     (opcional · modelo medido, en minúsculas y con guiones)
+ *    version:  v2                                              (obligatorio si hay model · v1, v2… o un nombre corto)
  *    metrics:                                                  (opcional · números, no texto)
  *      - name: spellF1          # spellF1 | macroF1 | u otra métrica con nombre claro
  *        value: 0.3120
  *        before: 0.2433         # opcional: valor de referencia para mostrar la mejora
- *        split: public-5min     # opcional: dónde se midió (public-5min, cv-fold-2…)
+ *        split: public-5min     # opcional: dónde se midió (public-5min, full-match, dfl-cv…)
  *        better: higher         # opcional: higher (por defecto) | lower
+ *        low: 0.2810            # opcional, con high: intervalo de bootstrap (run_evaluation.py --bootstrap 1000)
+ *        high: 0.3390
+ *        model: rules           # opcional: otro modelo/versión solo para esta métrica (comparar variantes)
+ *        version: v1
+ *
+ *  ── La gráfica de resultados (arriba en /log) ──────────────────────────────────────────────
+ *  Cada métrica con modelo y versión es un punto: eje X = date, eje Y = value, una línea por
+ *  modelo que une sus versiones. Se elige métrica y split arriba de la gráfica; solo se comparan
+ *  puntos del mismo split. Cada punto enlaza a su entrada, y la entrada muestra su modelo con el
+ *  mismo color. Las líneas de referencia (baseline publicado) están en lib/log-meta.ts → references.
+ *  Usa SIEMPRE el mismo nombre de modelo para sus versiones (hmm-viterbi v1, v2…): un nombre
+ *  distinto es otra línea.
  *    tags:     [hysteresis, smoothing]                         (opcional · ver «Focos actuales»)
  *    links:                                                    (opcional · siempre al fork: docs/, commit, PR, Jupyter)
  *      - label: "Study (ES)"
@@ -138,17 +152,41 @@ function parse(file: string): LogEntry {
   const unknown = authors.filter((a) => !handles.has(a))
   if (unknown.length) fail(file, `autores que no están en el squad (lib/content.ts): ${unknown.join(", ")}`)
 
+  // modelo y versión de la entrada: valen para todas sus métricas salvo que una diga otro
+  const entryModel = str("model", false)
+  const entryVersion = str("version", false)
+
   const metrics: Metric[] = (Array.isArray(data.metrics) ? data.metrics : []).map((x: Record<string, unknown>, i: number) => {
     const value = Number(x?.value)
     if (!x?.name || Number.isNaN(value)) fail(file, `metrics[${i}] necesita «name» y un «value» numérico`)
-    const before = x.before === undefined ? undefined : Number(x.before)
-    if (before !== undefined && Number.isNaN(before)) fail(file, `metrics[${i}].before debe ser un número`)
+    const num = (k: string) => {
+      if (x[k] === undefined) return undefined
+      const n = Number(x[k])
+      return Number.isNaN(n) ? fail(file, `metrics[${i}].${k} debe ser un número`) : n
+    }
+    const before = num("before")
+    const low = num("low")
+    const high = num("high")
+    if ((low === undefined) !== (high === undefined)) fail(file, `metrics[${i}] necesita «low» y «high» a la vez`)
+    if (low !== undefined && high !== undefined && low > high) fail(file, `metrics[${i}]: «low» no puede ser mayor que «high»`)
+
+    const model = x.model ? String(x.model) : entryModel
+    const version = x.version ? String(x.version) : entryVersion
+    if (model && !/^[a-z0-9]+([-_.][a-z0-9]+)*$/.test(model))
+      fail(file, `metrics[${i}]: el modelo «${model}» debe ir en minúsculas y con guiones (p. ej. hmm-viterbi)`)
+    if (model && !version) fail(file, `metrics[${i}]: falta «version» para el modelo «${model}» (p. ej. v1)`)
+    if (version && !model) fail(file, `metrics[${i}]: hay «version» pero falta «model»`)
+
     return {
       name: String(x.name),
       value,
       before,
       split: x.split ? String(x.split) : undefined,
       better: x.better === "lower" ? "lower" : "higher",
+      model,
+      version,
+      low,
+      high,
     }
   })
 
