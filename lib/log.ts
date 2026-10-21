@@ -93,6 +93,17 @@
  *    ## Next        qué viene después
  *  Se admite Markdown con GFM: tablas, listas, `código`, bloques ```, citas e imágenes.
  *
+ *  ── Figuras (todo lo visual que se pueda) ──────────────────────────────────────────────────
+ *  Bloques de código con estos lenguajes se dibujan como figuras al compilar (lib/log-viz.ts, con
+ *  la sintaxis completa encima de cada función):
+ *    ```timeline  tiras H/A/D/X en el tiempo, con spellF1 calculado como el scorer del reto;
+ *                 admite transformaciones (=viterbi(raw, 2), =hold(raw)…) para enseñar un método
+ *    ```pitch     el campo en uno o varios instantes: jugadores, balón, pases y la etiqueta
+ *    ```bars      barras con su valor            ```stats  cifras grandes
+ *    ```roadmap   pasos numerados (P0, P1…)
+ *  Ejemplo completo: content/log/2026-10-21-who-has-the-ball.md. Si un bloque está mal, el build
+ *  falla con un mensaje «[log] …». Lo que se dibuja es inventado: nunca datos del partido.
+ *
  *  ── Reglas que no se negocian (RULES.md del reto) ──────────────────────────────────────────
  *  - NUNCA pegues datos del partido: ni tracking, ni vídeo, ni etiquetas frame a frame, ni nada
  *    que permita reconstruirlos. Métricas agregadas y conclusiones, sí.
@@ -106,7 +117,8 @@
  */
 import fs from "node:fs"
 import path from "node:path"
-import { marked } from "marked"
+import { Marked } from "marked"
+import { renderViz, VizError } from "@/lib/log-viz"
 import { parse as parseYaml } from "yaml"
 import { squad } from "@/lib/content"
 import { logTypes, outcomes, type LogEntry, type LogType, type Metric, type Outcome } from "@/lib/log-meta"
@@ -208,8 +220,29 @@ function parse(file: string): LogEntry {
     metrics,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     links,
-    html: marked.parse(body, { async: false, gfm: true }) as string,
+    html: toHtml(file, body),
     minutes: Math.max(1, Math.round(words / 200)),
+  }
+}
+
+// Markdown → HTML; los bloques ```timeline, ```pitch, ```bars, ```stats y ```roadmap son figuras (lib/log-viz.ts)
+const md = new Marked({
+  gfm: true,
+  async: false,
+  renderer: {
+    code({ text, lang }) {
+      return renderViz(lang, text) ?? false
+    },
+  },
+})
+
+function toHtml(file: string, body: string) {
+  try {
+    // las tablas anchas se desplazan en horizontal dentro de su caja en vez de ensanchar la página
+    return (md.parse(body) as string).replace(/<table>/g, '<div class="prose-table"><table>').replace(/<\/table>/g, "</table></div>")
+  } catch (e) {
+    if (e instanceof VizError) fail(file, e.message)
+    throw e
   }
 }
 

@@ -56,7 +56,7 @@ export default async function EntryPage({ params }: { params: Params }) {
           </div>
 
           <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-8">
-            <article className="lg:col-span-8 lg:col-start-5">
+            <article className="min-w-0 lg:col-span-8 lg:col-start-5">
               <p className="flex flex-wrap items-center gap-2">
                 <TypeChip type={e.type} />
                 {e.outcome && <OutcomeChip outcome={e.outcome} />}
@@ -74,7 +74,7 @@ export default async function EntryPage({ params }: { params: Params }) {
                 </div>
               )}
 
-              <div className="prose-log mt-10 max-w-[68ch] border-t border-line pt-8" dangerouslySetInnerHTML={{ __html: e.html }} />
+              <div className="prose-log mt-10 border-t border-line pt-8" dangerouslySetInnerHTML={{ __html: e.html }} />
             </article>
 
             <aside className="lg:col-span-3 lg:row-start-1">
