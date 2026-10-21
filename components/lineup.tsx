@@ -78,12 +78,15 @@ export function Lineup({ still = false }: { still?: boolean }) {
               }}
               className="group flex flex-col items-center outline-none disabled:cursor-default"
             >
+              {/* tazo: canto blaugrana por segmentos alrededor de la foto */}
               <span
-                className={`relative block size-11 rounded-full ring-2 ring-paper transition-transform duration-500 sm:size-16 sm:ring-[3px] lg:size-[5.5rem] ${
+                className={`relative block size-11 rounded-full bg-[repeating-conic-gradient(var(--color-blau)_0_22.5deg,var(--color-grana)_22.5deg_45deg)] p-[3px] ring-2 ring-paper transition-transform duration-500 sm:size-16 sm:p-1 sm:ring-[3px] lg:size-[5.5rem] lg:p-1.5 ${
                   isActive ? "scale-110 shadow-[0_18px_40px_-14px_rgb(11_14_44/0.55)]" : "shadow-[0_10px_24px_-14px_rgb(11_14_44/0.5)]"
                 } group-focus-visible:outline-2 group-focus-visible:outline-offset-4 group-focus-visible:outline-accent`}
               >
-                <Avatar player={p} color={isActive} />
+                <span className="block size-full rounded-full ring-[1.5px] ring-paper">
+                  <Avatar player={p} />
+                </span>
               </span>
               <span className="mt-1 rounded-full bg-paper/85 px-1.5 py-0.5 font-display text-[0.78rem] font-semibold leading-tight tracking-[-0.02em] backdrop-blur sm:mt-2 sm:px-2 sm:text-base">
                 {p.name}
@@ -113,7 +116,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
   )
 }
 
-function Avatar({ player: p, color }: { player: Player; color: boolean }) {
+function Avatar({ player: p }: { player: Player }) {
   if (!p.github)
     return (
       <span
@@ -132,12 +135,7 @@ function Avatar({ player: p, color }: { player: Player; color: boolean }) {
         width={200}
         height={200}
         loading="lazy"
-        className={`size-full object-cover transition-[filter] duration-500 ${color ? "grayscale-0" : "grayscale contrast-125"}`}
-      />
-      {/* duotono blaugrana que se retira al abrir la ficha */}
-      <span
-        aria-hidden
-        className={`absolute inset-0 bg-[linear-gradient(160deg,var(--color-blau),var(--color-grana))] mix-blend-multiply transition-opacity duration-500 ${color ? "opacity-0" : "opacity-100"}`}
+        className="size-full object-cover"
       />
     </span>
   )
