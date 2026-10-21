@@ -131,6 +131,8 @@ export const squad: Player[] = [
     role: "",
     position: "Forward",
     spot: [46, 13],
+    github: "PabloCordoba3",
+    linkedin: "https://www.linkedin.com/in/pablo-cordoba-simarro/",
   },
 ]
 
