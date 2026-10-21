@@ -9,11 +9,15 @@ type: experiment # study | code | experiment | iteration | data | decision
 outcome: failure # success | failure | mixed | open (obligatorio en experiment e iteration)
 authors: [hxst1, n1co2611] # handles de GitHub del squad
 summary: "Requiring the other team to hold the ball for 0.8 s before switching the label removed flicker, but merged two short real possessions into one."
+model: rules-hysteresis # modelo medido: una línea en la gráfica de /log (mismo nombre en todas sus versiones)
+version: v1 # versión: un punto en esa línea
 metrics:
   - name: spellF1
-    value: 0.2410
-    before: 0.2433
-    split: public-5min
+    value: 0.3110
+    before: 0.3256 # baseline_smooth50 en la ventana pública (EVALUATION.md del fork)
+    split: public-5min # solo se comparan puntos del mismo split
+    low: 0.2480 # opcional: intervalo de bootstrap (run_evaluation.py --bootstrap 1000)
+    high: 0.3790
 tags: [hysteresis, possession-change, temporal-continuity]
 links:
   - label: "Study (ES)"
