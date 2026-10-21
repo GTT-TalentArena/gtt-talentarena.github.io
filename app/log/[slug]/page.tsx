@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getEntries, getEntry, logTypes } from "@/lib/log"
+import { getEntries, getEntry, logTypes, modelColors } from "@/lib/log"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Arrow } from "@/components/icons"
-import { Authors, MetricPill, OutcomeChip, TypeChip } from "@/components/log/parts"
+import { Authors, MetricPill, ModelTag, OutcomeChip, TypeChip } from "@/components/log/parts"
 
 type Params = Promise<{ slug: string }>
 
@@ -29,6 +29,9 @@ export default async function EntryPage({ params }: { params: Params }) {
   const e = entries[i]
   const newer = entries[i - 1]
   const older = entries[i + 1]
+  // modelos medidos en esta entrada, con el color de su línea en la gráfica de /log
+  const colors = modelColors(entries)
+  const models = [...new Map(e.metrics.filter((m) => m.model).map((m) => [`${m.model} ${m.version}`, m])).values()]
   const long = new Date(`${e.date}T12:00:00Z`).toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
@@ -66,7 +69,7 @@ export default async function EntryPage({ params }: { params: Params }) {
               {e.metrics.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-3">
                   {e.metrics.map((m) => (
-                    <MetricPill key={m.name + m.split} m={m} big />
+                    <MetricPill key={m.name + m.split + m.model + m.version} m={m} big color={m.model && colors[m.model]} />
                   ))}
                 </div>
               )}
@@ -96,6 +99,18 @@ export default async function EntryPage({ params }: { params: Params }) {
                   <dt className="label text-muted">Reading</dt>
                   <dd className="mt-1">{e.minutes} min</dd>
                 </div>
+                {models.length > 0 && (
+                  <div>
+                    <dt className="label text-muted">{models.length === 1 ? "Model" : "Models"}</dt>
+                    <dd className="mt-1.5 space-y-1 text-sm">
+                      {models.map((m) => (
+                        <Link key={`${m.model} ${m.version}`} href="/log#results" className="flex hover:text-accent">
+                          <ModelTag model={m.model!} version={m.version} color={colors[m.model!]} />
+                        </Link>
+                      ))}
+                    </dd>
+                  </div>
+                )}
                 {e.tags.length > 0 && (
                   <div>
                     <dt className="label text-muted">Tags</dt>

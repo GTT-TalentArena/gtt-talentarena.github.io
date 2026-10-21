@@ -1,11 +1,23 @@
 import type { Metadata } from "next"
 import { fixtures, now, site } from "@/lib/content"
-import { getEntries, logTypes, shortDate, weekStart, type LogEntry, type LogType } from "@/lib/log"
+import {
+  defaultSplit,
+  getEntries,
+  logTypes,
+  modelColors,
+  references,
+  resultPoints,
+  shortDate,
+  weekStart,
+  type LogEntry,
+  type LogType,
+} from "@/lib/log"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Reveal } from "@/components/reveal"
 import { LogRow } from "@/components/log/log-row"
 import { Chronology, TypeFilter } from "@/components/log/chronology"
+import { ResultsChart } from "@/components/log/results-chart"
 
 export const metadata: Metadata = {
   title: "Log",
@@ -23,7 +35,11 @@ export default function LogPage() {
   const tested = entries.filter((e) => e.type === "experiment" || e.type === "iteration")
   const ok = tested.filter((e) => e.outcome === "success").length
   const ko = tested.filter((e) => e.outcome === "failure").length
-  const spell = entries.flatMap((e) => e.metrics.filter((m) => m.name.toLowerCase() === "spellf1").map((m) => m.value))
+  // resultados de los modelos: la gráfica y el «mejor» solo comparan dentro de un mismo split
+  const points = resultPoints(entries)
+  const colors = modelColors(entries)
+  const bestSplit = defaultSplit(points, "spellF1")
+  const spell = points.filter((p) => p.metric === "spellF1" && p.split === bestSplit).map((p) => p.value)
   const best = spell.length ? Math.max(...spell) : undefined
 
   // semanas de partido desde el arranque
@@ -87,7 +103,9 @@ export default function LogPage() {
                   </dd>
                 </div>
                 <div className="flex flex-col justify-between gap-1">
-                  <dt className="label text-muted">Best spellF1</dt>
+                  <dt className="label text-muted">
+                    Best spellF1 <span className="normal-case tracking-normal">· {bestSplit}</span>
+                  </dt>
                   <dd className="mt-1 font-mono text-2xl tabular-nums">{best !== undefined ? best.toFixed(4) : "—"}</dd>
                 </div>
                 <p className="label col-span-3 border-t border-line pt-3 text-muted">
@@ -98,20 +116,33 @@ export default function LogPage() {
           </div>
         </section>
 
-        <section className="px-4 pb-10 sm:px-6 lg:px-10">
+        {/* primer plano: los resultados de los modelos */}
+        <section id="results" aria-label="Model results" className="px-4 pb-12 sm:px-6 lg:px-10">
           <Reveal className="mx-auto max-w-[1440px]">
-            <Chronology
-              from={KICKOFF}
-              to={to}
+            <ResultsChart
+              points={points}
+              references={references}
+              colors={colors}
               milestones={fixtures.map((f) => ({ date: f.start, title: f.title }))}
-              dots={entries.map(({ slug, title, date, type, outcome }) => ({ slug, title, date, type, outcome }))}
+              from={KICKOFF}
+              to={fixtures[1].start}
             />
           </Reveal>
         </section>
 
         <section className="px-4 pb-24 sm:px-6 sm:pb-32 lg:px-10">
           <div className="mx-auto max-w-[1440px]">
-            <TypeFilter counts={counts} />
+            {/* segundo plano: la cronología de entradas, encima de la lista a la que enlaza */}
+            <Chronology
+              from={KICKOFF}
+              to={to}
+              milestones={fixtures.map((f) => ({ date: f.start, title: f.title }))}
+              dots={entries.map(({ slug, title, date, type, outcome }) => ({ slug, title, date, type, outcome }))}
+            />
+
+            <div className="mt-10">
+              <TypeFilter counts={counts} />
+            </div>
 
             {entries.length === 0 ? (
               <p className="mt-10 border-t border-line pt-6 text-muted">
@@ -132,7 +163,7 @@ export default function LogPage() {
                     </p>
                     {list.map((e) => (
                       <div key={e.slug} data-entry-type={e.type} title={logTypes[e.type].description}>
-                        <LogRow entry={e} anchor />
+                        <LogRow entry={e} anchor colors={colors} />
                       </div>
                     ))}
                   </div>

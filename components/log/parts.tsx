@@ -33,8 +33,19 @@ export function OutcomeChip({ outcome }: { outcome: Outcome }) {
   )
 }
 
+/** El modelo y la versión de una métrica, con el mismo color que su línea en la gráfica de resultados. */
+export function ModelTag({ model, version, color }: { model: string; version?: string; color?: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 font-mono normal-case tracking-normal">
+      <span aria-hidden className="inline-block h-0.5 w-3.5 rounded-full bg-ink" style={color ? { background: color } : undefined} />
+      {model}
+      {version && <span className="text-muted">{version}</span>}
+    </span>
+  )
+}
+
 /** «0.2433 → 0.3120 ▲ +0.0687», en verde si mejora y en naranja si empeora. */
-export function MetricPill({ m, big = false }: { m: Metric; big?: boolean }) {
+export function MetricPill({ m, big = false, color }: { m: Metric; big?: boolean; color?: string }) {
   const delta = m.before === undefined ? undefined : m.value - m.before
   const better = delta === undefined ? undefined : m.better === "higher" ? delta > 0 : delta < 0
   const fmt = (n: number) => (Math.abs(n) >= 100 ? n.toFixed(0) : Math.abs(n) >= 10 ? n.toFixed(2) : n.toFixed(4))
@@ -42,11 +53,21 @@ export function MetricPill({ m, big = false }: { m: Metric; big?: boolean }) {
     <span
       className={`inline-flex flex-wrap items-baseline gap-x-2 rounded-xl border border-line font-mono tabular-nums ${big ? "flex-col gap-y-1 p-4" : "px-3 py-1.5 text-xs"}`}
     >
+      {m.model && (
+        <span className={big ? "text-sm" : ""}>
+          <ModelTag model={m.model} version={m.version} color={color} />
+        </span>
+      )}
       <span className="label text-muted">
         {m.name}
         {m.split && <span className="normal-case tracking-normal"> · {m.split}</span>}
       </span>
       <span className={big ? "font-display-tight text-[clamp(2.4rem,5vw,3.6rem)]" : "text-sm"}>{fmt(m.value)}</span>
+      {big && m.low !== undefined && (
+        <span className="text-xs text-muted">
+          bootstrap {fmt(m.low)}–{fmt(m.high!)}
+        </span>
+      )}
       {delta !== undefined && (
         <span className={better ? "text-[#1f8a52]" : delta === 0 ? "text-muted" : "text-fail"}>
           {delta > 0 ? "▲ +" : delta < 0 ? "▼ " : "= "}
