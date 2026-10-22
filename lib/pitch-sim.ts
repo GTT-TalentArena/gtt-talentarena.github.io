@@ -55,7 +55,7 @@ const FORMATION: [number, number][] = [
   [58, 56],
 ]
 
-function mulberry32(seed: number) {
+export function mulberry32(seed: number) {
   let a = seed >>> 0
   return () => {
     a = (a + 0x6d2b79f5) >>> 0
@@ -66,8 +66,8 @@ function mulberry32(seed: number) {
   }
 }
 
-const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
-const dist = (ax: number, ay: number, bx: number, by: number) => Math.hypot(ax - bx, ay - by)
+export const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
+export const dist = (ax: number, ay: number, bx: number, by: number) => Math.hypot(ax - bx, ay - by)
 
 export class PitchSim {
   frame: number

@@ -73,7 +73,7 @@ export type Position = "Goalkeeper" | "Defender" | "Forward"
 export type Player = {
   number: string
   name: string
-  /** Los roles están sujetos a cambios: vacío = «Pending». */
+  /** El de la tabla del README de la organización (GTT-TalentArena/.github); vacío = «Role pending». */
   role: string
   /** Formación 1-2-2 en medio campo (propuesta de Alejandro). */
   position: Position
@@ -89,7 +89,7 @@ export const squad: Player[] = [
   {
     number: "01",
     name: "Jimy",
-    role: "",
+    role: "Possession model",
     position: "Defender",
     spot: [48, 31],
     github: "jimy-k4",
@@ -99,7 +99,7 @@ export const squad: Player[] = [
   {
     number: "02",
     name: "Edu",
-    role: "",
+    role: "Evaluation and documentation",
     position: "Forward",
     spot: [22, 13],
     github: "hxst1",
@@ -109,7 +109,7 @@ export const squad: Player[] = [
   {
     number: "03",
     name: "Alejandro",
-    role: "",
+    role: "GitHub, integration and delivery",
     position: "Goalkeeper",
     spot: [34, 45.5],
     github: "AlejandroMolines",
@@ -118,7 +118,7 @@ export const squad: Player[] = [
   {
     number: "04",
     name: "Nico",
-    role: "",
+    role: "Data and tracking",
     position: "Defender",
     spot: [20, 31],
     github: "n1co2611",
@@ -128,7 +128,7 @@ export const squad: Player[] = [
   {
     number: "05",
     name: "Pablo",
-    role: "",
+    role: "Football context",
     position: "Forward",
     spot: [46, 13],
     github: "PabloCordoba3",

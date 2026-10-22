@@ -23,7 +23,7 @@ export function Squad() {
             </Reveal>
             <Formation className="mt-8" />
             <Reveal as="p" delay={160} className="label mt-6 text-muted">
-              Hover or tap a player for their links
+              Hover or tap a player for their role and work
             </Reveal>
           </div>
 

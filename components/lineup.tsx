@@ -1,33 +1,81 @@
 "use client"
 
-import { useEffect, useRef, useState, type CSSProperties } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type Ref } from "react"
 import { squad, type Player } from "@/lib/content"
+import { clamp } from "@/lib/pitch-sim"
+import { FPS, SquadSim } from "@/lib/squad-sim"
 import { Arrow } from "@/components/icons"
 
 // Medio campo en metros (68 × 52,5) con margen para la portería, que sobresale por abajo
 const VIEW = { x: -3, y: -3, w: 74, h: 58.5 }
-const at = ([x, y]: [number, number]): CSSProperties => ({
-  left: `${((x - VIEW.x) / VIEW.w) * 100}%`,
-  top: `${((y - VIEW.y) / VIEW.h) * 100}%`,
-})
+const at = ([x, y]: [number, number]) =>
+  ({
+    left: `${((x - VIEW.x) / VIEW.w) * 100}%`,
+    top: `${((y - VIEW.y) / VIEW.h) * 100}%`,
+  }) satisfies CSSProperties
 
 const short: Record<Player["position"], string> = { Goalkeeper: "GK", Defender: "DEF", Forward: "FWD" }
 
+// La ficha flota junto al jugador desde sm; en móvil se acopla abajo. Solo se pinta una de las dos,
+// para no cargar dos veces la web del jugador.
+const WIDE = "(min-width: 640px)"
+function useWide() {
+  return useSyncExternalStore(
+    (cb) => {
+      const m = window.matchMedia(WIDE)
+      m.addEventListener("change", cb)
+      return () => m.removeEventListener("change", cb)
+    },
+    () => window.matchMedia(WIDE).matches,
+    () => true,
+  )
+}
+
 /**
- * La plantilla en formación 1-2-2 sobre medio campo. Al pasar el ratón, enfocar con el teclado
- * o tocar un jugador se abre su ficha. `still`: sin interacción (para las imágenes del README).
+ * La plantilla en formación 1-2-2 sobre medio campo, jugando sola un partidillo (lib/squad-sim.ts).
+ * Al pasar el ratón, enfocar con el teclado o tocar un jugador se abre su ficha, con su web dentro;
+ * ese jugador se queda quieto y los demás siguen. `still`: quietos y sin interacción (imágenes del README).
  */
 export function Lineup({ still = false }: { still?: boolean }) {
   const [active, setActive] = useState<string | null>(null)
   const pinned = useRef(false)
   const closing = useRef<ReturnType<typeof setTimeout>>(undefined)
   const root = useRef<HTMLDivElement>(null)
+  const tokens = useRef<(HTMLDivElement | null)[]>([])
+  const avatar = useRef<HTMLSpanElement>(null)
+  const ballEl = useRef<HTMLSpanElement>(null)
+  const activeRef = useRef<string | null>(null)
+  const card = useRef<HTMLDivElement>(null)
+  const [place, setPlace] = useState<CSSProperties>({ visibility: "hidden" })
+  const wide = useWide()
+
+  // La ficha, junto al jugador tal como está al abrirla (se queda quieto mientras está abierta):
+  // a su lado, hacia el centro del campo, y sin salirse del campo. Si de lado no cabe, encima o debajo.
+  useLayoutEffect(() => {
+    if (!active || !wide || !card.current) return
+    const r = root.current!.getBoundingClientRect()
+    const t = tokens.current[squad.findIndex((p) => p.number === active)]!.querySelector("button")!.getBoundingClientRect()
+    const w = card.current.offsetWidth
+    const h = card.current.offsetHeight
+    const gap = 12
+    const cx = t.left + t.width / 2 - r.left
+    const cy = t.top + t.height / 2 - r.top
+    let left = cx < r.width / 2 ? t.right - r.left + gap : t.left - r.left - gap - w
+    let top = clamp(cy - h / 2, 0, r.height - h)
+    if (left < 0 || left + w > r.width) {
+      left = clamp(cx - w / 2, 0, r.width - w)
+      top = cy > r.height / 2 ? t.top - r.top - gap - h : t.bottom - r.top + gap
+    }
+    setPlace({ left, top })
+  }, [active, wide])
 
   useEffect(() => {
+    activeRef.current = active
     if (!active) return
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && ((pinned.current = false), setActive(null))
+    // en móvil no hay hover: la ficha se queda hasta que se cierra (✕ o tocando otra vez al jugador)
     const onDown = (e: PointerEvent) => {
-      if (!root.current?.contains(e.target as Node)) {
+      if (wide && !root.current?.contains(e.target as Node)) {
         pinned.current = false
         setActive(null)
       }
@@ -38,7 +86,75 @@ export function Lineup({ still = false }: { still?: boolean }) {
       window.removeEventListener("keydown", onKey)
       window.removeEventListener("pointerdown", onDown)
     }
-  }, [active])
+  }, [active, wide])
+
+  // el partidillo: mueve las fichas y el balón sin pasar por React
+  useEffect(() => {
+    if (still || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const el = root.current!
+    const ball = ballEl.current!
+    const sim = new SquadSim(
+      squad.map((p) => p.spot),
+      squad.findIndex((p) => p.position === "Goalkeeper"),
+    )
+
+    // el balón se controla en el borde de la ficha, que cambia de tamaño con la pantalla
+    const measure = () => {
+      const a = avatar.current
+      if (a && el.clientWidth) sim.reach = (a.offsetWidth / 2 / el.clientWidth) * VIEW.w + 0.6
+    }
+    const render = () => {
+      sim.mates.forEach((m, i) => {
+        const t = tokens.current[i]
+        if (!t) return
+        const p = at([m.x, m.y])
+        t.style.left = p.left
+        t.style.top = p.top
+      })
+      const p = at([
+        Math.max(VIEW.x + 0.5, Math.min(VIEW.x + VIEW.w - 0.5, sim.ball.x)),
+        Math.max(VIEW.y + 0.5, Math.min(VIEW.y + VIEW.h - 0.5, sim.ball.y)),
+      ])
+      ball.style.left = p.left
+      ball.style.top = p.top
+      ball.style.opacity = "1"
+    }
+
+    let visible = true
+    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting), { rootMargin: "120px" })
+    io.observe(el)
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    measure()
+
+    let raf = 0
+    let last = performance.now()
+    let acc = 0
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop)
+      const dt = Math.min(0.1, (now - last) / 1000)
+      last = now
+      if (!visible || document.hidden) return
+      const i = squad.findIndex((p) => p.number === activeRef.current)
+      sim.selected = i < 0 ? null : i
+      acc += dt
+      let stepped = false
+      while (acc >= 1 / FPS) {
+        sim.step()
+        acc -= 1 / FPS
+        stepped = true
+      }
+      if (stepped) render()
+    }
+    render()
+    raf = requestAnimationFrame(loop)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      io.disconnect()
+      ro.disconnect()
+    }
+  }, [still])
 
   const open = (n: string) => {
     clearTimeout(closing.current)
@@ -54,22 +170,25 @@ export function Lineup({ still = false }: { still?: boolean }) {
   return (
     <div ref={root} className="relative w-full select-none" style={{ aspectRatio: `${VIEW.w} / ${VIEW.h}` }}>
       <HalfPitch />
-      {squad.map((p) => {
+      {squad.map((p, i) => {
         const isActive = active === p.number
-        const [x, y] = p.spot
         return (
           <div
             key={p.number}
+            ref={(node) => {
+              tokens.current[i] = node
+            }}
             className={`absolute -translate-x-1/2 -translate-y-[38%] ${isActive ? "z-20" : "z-10"}`}
             style={at(p.spot)}
-            onMouseEnter={still ? undefined : () => open(p.number)}
-            onMouseLeave={still ? undefined : close}
+            // con el ratón moviéndose de verdad: un jugador que pasa por debajo del ratón quieto no abre su ficha
+            onMouseMove={still ? undefined : (e) => (e.movementX || e.movementY) && open(p.number)}
+            onMouseLeave={still ? undefined : () => active === p.number && close()}
           >
             <button
               type="button"
               disabled={still}
               aria-expanded={isActive}
-              aria-controls={`player-${p.number} player-${p.number}-m`}
+              aria-controls={`player-${p.number}`}
               onFocus={() => open(p.number)}
               onBlur={close}
               onClick={() => {
@@ -80,6 +199,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
             >
               {/* tazo: canto blaugrana por segmentos alrededor de la foto */}
               <span
+                ref={i === 0 ? avatar : undefined}
                 className={`relative block size-11 rounded-full bg-[repeating-conic-gradient(var(--color-blau)_0_22.5deg,var(--color-grana)_22.5deg_45deg)] p-[3px] ring-2 ring-paper transition-transform duration-500 sm:size-16 sm:p-1 sm:ring-[3px] lg:size-[5.5rem] lg:p-1.5 ${
                   isActive ? "scale-110 shadow-[0_18px_40px_-14px_rgb(11_14_44/0.55)]" : "shadow-[0_10px_24px_-14px_rgb(11_14_44/0.5)]"
                 } group-focus-visible:outline-2 group-focus-visible:outline-offset-4 group-focus-visible:outline-accent`}
@@ -94,15 +214,32 @@ export function Lineup({ still = false }: { still?: boolean }) {
               <span className="label hidden text-[0.58rem] text-muted sm:block">{short[p.position]}</span>
             </button>
 
-            {isActive && !still && (
-              <Info player={p} placement="anchored" above={y > 20} align={x < 30 ? "left" : x > 38 ? "right" : "center"} />
-            )}
           </div>
         )
       })}
 
+      {active && !still && wide && (
+        <Info
+          ref={card}
+          player={squad.find((p) => p.number === active)!}
+          placement="anchored"
+          style={place}
+          onMouseEnter={() => clearTimeout(closing.current)}
+          onMouseLeave={close}
+        />
+      )}
+
+      {/* el balón: por encima de las fichas y por debajo de la ficha abierta */}
+      {!still && (
+        <span
+          ref={ballEl}
+          aria-hidden
+          className="pointer-events-none absolute z-[15] size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-ink/70 bg-[radial-gradient(circle,var(--color-ink)_0_26%,#fff_30%)] opacity-0 shadow-[0_2px_5px_rgb(11_14_44/0.4)] sm:size-3.5 lg:size-4"
+        />
+      )}
+
       {/* en móvil la ficha no flota junto al jugador (se saldría de la pantalla): se acopla abajo, a todo el ancho */}
-      {active && !still && (
+      {active && !still && !wide && (
         <Info
           player={squad.find((p) => p.number === active)!}
           placement="docked"
@@ -141,18 +278,74 @@ function Avatar({ player: p }: { player: Player }) {
   )
 }
 
+// La web del jugador se pinta a 1280 px de ancho y se encoge hasta caber en la ficha
+const FRAME = { w: 1280, h: 640 }
+
+/** Vista previa en vivo de la web del jugador, como las tarjetas de un panel: solo para mirar. */
+function SitePreview({ href, name, className = "aspect-[2/1]" }: { href: string; name: string; className?: string }) {
+  const box = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0)
+  const [loaded, setLoaded] = useState(false)
+  const host = new URL(href).hostname.replace(/^www\./, "")
+
+  useEffect(() => {
+    const el = box.current!
+    const ro = new ResizeObserver(([e]) => setScale(e.contentRect.width / FRAME.w))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      tabIndex={-1}
+      aria-hidden
+      className={`group/site relative block overflow-hidden border-b border-line bg-paper-2 ${className}`}
+    >
+      <div ref={box} className="absolute inset-0">
+        {scale > 0 && (
+          <iframe
+            src={href}
+            title={`${name}'s website`}
+            width={FRAME.w}
+            height={FRAME.h}
+            tabIndex={-1}
+            sandbox="allow-scripts allow-same-origin"
+            onLoad={() => setLoaded(true)}
+            className={`pointer-events-none origin-top-left border-0 bg-paper transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
+            style={{ transform: `scale(${scale})` }}
+          />
+        )}
+      </div>
+      {!loaded && (
+        <span className="label absolute inset-0 grid animate-pulse place-items-center text-[0.62rem] text-muted">{host}</span>
+      )}
+      <span className="label absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-paper/90 px-2 py-0.5 text-[0.58rem] text-ink/80 shadow-sm backdrop-blur">
+        {host}
+        <Arrow className="size-2 transition-transform duration-500 group-hover/site:rotate-45" />
+      </span>
+    </a>
+  )
+}
+
 function Info({
+  ref,
   player: p,
   placement,
-  above = true,
-  align = "center",
+  style,
   onClose,
+  onMouseEnter,
+  onMouseLeave,
 }: {
+  ref?: Ref<HTMLDivElement>
   player: Player
   placement: "anchored" | "docked"
-  above?: boolean
-  align?: "left" | "right" | "center"
+  style?: CSSProperties
   onClose?: () => void
+  onMouseEnter?: () => void
+  onMouseLeave?: () => void
 }) {
   const links = [
     { label: "GitHub", href: p.github && `https://github.com/${p.github}` },
@@ -160,53 +353,64 @@ function Info({
     { label: "LinkedIn", href: p.linkedin },
   ].filter((l): l is { label: string; href: string } => Boolean(l.href))
 
-  // anclada: junto al jugador (foto + nombre), encima o debajo sin taparle; solo desde sm
-  // acoplada: abajo del campo y a todo el ancho; solo en móvil
-  const x = align === "left" ? "left-0" : align === "right" ? "right-0" : "left-1/2 -translate-x-1/2"
-  const y = above ? "bottom-[calc(100%+0.5rem)]" : "top-[calc(100%+0.5rem)]"
-  const position =
-    placement === "anchored" ? `hidden sm:block ${x} ${y} w-64` : "inset-x-2 bottom-2 z-30 sm:hidden"
+  // anclada: junto al jugador, donde diga `style`; solo desde sm
+  // acoplada: abajo del campo y a todo el ancho; solo en móvil, más baja para caber en el campo
+  const docked = placement === "docked"
+  const position = docked ? "inset-x-2 bottom-2 z-30" : "z-30 w-72"
 
   return (
     <div
-      id={placement === "anchored" ? `player-${p.number}` : `player-${p.number}-m`}
+      ref={ref}
+      id={`player-${p.number}`}
       role="dialog"
       aria-label={`${p.name}, ${p.position}`}
-      className={`absolute ${position} rounded-2xl border border-line bg-paper p-4 text-left shadow-[0_24px_60px_-18px_rgb(11_14_44/0.45)]`}
+      style={style}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onFocus={onMouseEnter}
+      onBlur={onMouseLeave}
+      className={`absolute ${position} overflow-hidden rounded-2xl border border-line bg-paper text-left shadow-[0_24px_60px_-18px_rgb(11_14_44/0.45)]`}
     >
+      {p.portfolio && <SitePreview href={p.portfolio} name={p.name} className={docked ? "aspect-[7/2]" : undefined} />}
       {onClose && (
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-2 top-2 grid size-9 place-items-center rounded-full text-muted hover:bg-paper-2 hover:text-ink"
+          className="absolute right-2 top-2 z-10 grid size-9 place-items-center rounded-full bg-paper/85 text-muted backdrop-blur hover:bg-paper-2 hover:text-ink"
         >
           <svg viewBox="0 0 12 12" className="size-3" aria-hidden>
             <path d="M3 3l6 6M9 3 3 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
         </button>
       )}
-      <p className="label text-accent">{p.position}</p>
-      <p className="mt-2 font-display text-[1.9rem] font-semibold leading-none tracking-[-0.03em]">{p.name}</p>
-      <p className="accent mt-1.5 leading-tight [--accent-base:1.25rem]">{p.role || <span className="text-muted">Role pending</span>}</p>
-      <p className="label mt-3 text-muted">{p.github ? `@${p.github}` : "Signing soon"}</p>
-      {links.length > 0 && (
-        <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3">
-          {links.map((l) => (
-            <li key={l.label}>
-              <a
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className="label group/link inline-flex items-center gap-1 text-ink/70 transition-colors hover:text-ink"
-              >
-                {l.label}
-                <Arrow className="size-2.5 transition-transform duration-500 group-hover/link:rotate-45" />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className={docked ? "p-3" : "p-4"}>
+        <p className="label text-accent">{p.position}</p>
+        <p
+          className={`font-display font-semibold leading-none tracking-[-0.03em] ${docked ? "mt-1.5 text-2xl" : "mt-2 text-[1.9rem]"}`}
+        >
+          {p.name}
+        </p>
+        <p className="accent mt-1.5 leading-tight [--accent-base:1.25rem]">{p.role || <span className="text-muted">Role pending</span>}</p>
+        {!docked && <p className="label mt-3 text-muted">{p.github ? `@${p.github}` : "Signing soon"}</p>}
+        {links.length > 0 && (
+          <ul className={`flex flex-wrap gap-x-4 gap-y-1 border-t border-line ${docked ? "mt-2.5 pt-2.5" : "mt-3 pt-3"}`}>
+            {links.map((l) => (
+              <li key={l.label}>
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="label group/link inline-flex items-center gap-1 text-ink/70 transition-colors hover:text-ink"
+                >
+                  {l.label}
+                  <Arrow className="size-2.5 transition-transform duration-500 group-hover/link:rotate-45" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }
