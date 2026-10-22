@@ -13,7 +13,7 @@ links:
   - label: "Candidate A results"
     href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/prompts/confrontacion/a-opus/resultados.csv
   - label: "Candidate B results"
-    href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/cand/b-gpt-claude/prompts/confrontacion/b-gpt-claude/resultados.csv
+    href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/prompts/confrontacion/b-gpt-claude/resultados.csv
 ---
 
 ## Context
@@ -22,7 +22,7 @@ Two members built a possession model each from the same brief, the same inputs a
 
 ## Decision
 
-On 22 October, Alejandro, the neutral judge who wrote neither candidate, picked **candidate A**. The team continues on A: P2 → P3 → P4 → the 0.2433 milestone (#17). B is kept in its branch, and its code leaves `main` once its PR has recorded the comparison.
+On 22 October, Alejandro, the neutral judge who wrote neither candidate, picked **candidate A**. The team continues on A: P2 → P3 → P4 → the 0.2433 milestone (#17). Both candidates stay in `main` (`solution/a_opus` and `solution/b_gpt`), so they can be run side by side with the common Docker pipeline.
 
 ## Result
 
