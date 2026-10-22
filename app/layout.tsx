@@ -30,6 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+        {/* Visitas anónimas, sin cookies: https://jimy-superveil.vercel.app (no cuenta localhost ni navegadores automáticos) */}
+        <script defer src="https://jimy-superveil.vercel.app/p.js" data-site="gtt" />
       </head>
       <body>
         <a
