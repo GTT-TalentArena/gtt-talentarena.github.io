@@ -7,7 +7,7 @@ summary: "What H, A, D and X mean, why spellF1 punishes flicker, how to spot a c
 tags: [rules, possession-change, temporal-continuity, hysteresis, min-duration, smoothing, state-of-the-art]
 links:
   - label: "Full study (ES)"
-    href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/docs/estudio-posesion/docs/ESTUDIO_POSESION.md
+    href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/docs/ESTUDIO_POSESION.md
   - label: "CHALLENGE.md"
     href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/CHALLENGE.md
   - label: "EVALUATION.md"
