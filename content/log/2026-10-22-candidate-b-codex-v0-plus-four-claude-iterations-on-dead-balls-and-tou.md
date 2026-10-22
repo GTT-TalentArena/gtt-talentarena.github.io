@@ -26,7 +26,7 @@ links:
 
 ## Context
 
-This is candidate B of the face-off protocol (#26). On 22 October the neutral evaluator picked **candidate A** (#33). This PR records B so that the comparison is complete; as the evaluator asked, B's code is removed from `main` right after, and stays in branch `cand/b-gpt-claude` and tag `b-gpt-v0`.
+This is candidate B of the face-off protocol (#26). On 22 October the neutral evaluator picked **candidate A** (#33). This PR records B so that the comparison is complete. Both candidates stay in `main`, so they can be run side by side with the common Docker pipeline; B's history is also in branch `cand/b-gpt-claude` and tag `b-gpt-v0`.
 
 B was built without ever showing match data to an LLM: the assistant writes code from public documentation and synthetic data, Edu runs it locally and reports aggregates only. It is shown as two versions:
 
@@ -63,7 +63,7 @@ Public 5-minute window (GT: 17 possessions). Full-match columns use no ground tr
 
 ## Next
 
-- Remove B's code from `main` after merging this PR (the evaluator's plan); the team continues with candidate A (P2 → P3 → P4 → the 0.2433 milestone, #17).
+- The team continues with candidate A (B stays in `main` for side-by-side runs) (P2 → P3 → P4 → the 0.2433 milestone, #17).
 - Lessons from B that may help A: GT-free diagnostics to size a change before making it, the ball being untracked during most stoppages, and the open question of how long a change of possession must last.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
