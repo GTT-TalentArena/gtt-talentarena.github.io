@@ -3,13 +3,15 @@ title: "Reading the challenge before writing a line"
 date: 2026-10-20
 type: study
 authors: [jimy-k4]
-summary: "The data landed today. Before any code: what the metric actually rewards, why the public window can mislead us, and what an invisible ball means for the problem."
+summary: "The data landed today. Before any code: what the metric actually rewards, why the public window can mislead us, what an invisible ball means for the problem, and the ground rules we work by."
 tags: [rules, metrics, spellF1]
 links:
   - label: "CHALLENGE.md"
     href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/CHALLENGE.md
   - label: "EVALUATION.md"
     href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/EVALUATION.md
+  - label: "RULES.md"
+    href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/RULES.md
 ---
 
 ## Context
@@ -37,6 +39,16 @@ scored, and how.
 
 > The score is about possessions, not frames. A method that is right frame by frame but flickers
 > loses to one that is slightly wrong and stable.
+
+## How we work, because of the rules
+
+- **In the open.** The submission needs a public repository that regenerates our file from the data,
+  so [our fork](https://github.com/GTT-TalentArena/more-than-a-hack-2027) is public from day one.
+- **No match data in git, ever**, and nothing that could rebuild it: no videos, no tracking, no
+  frame-level labels. This log follows the same rule: aggregate metrics and conclusions only.
+- **Labels come from an algorithm.** No hand labelling and no correcting frames by eye.
+- **The only ground truth we touch is the public five minutes.** The full-match ground truth stays
+  private, and so does the ranking that comes from it.
 
 ## Next
 
