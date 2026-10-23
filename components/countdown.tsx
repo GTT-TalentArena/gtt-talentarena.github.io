@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-/** «27d 08h» hasta `to`; «Closed» cuando ya ha pasado. */
+/** "27d 08h" until `to`; "Closed" once it has passed. */
 export function Countdown({ to }: { to: string }) {
   const [left, setLeft] = useState<string | null>(null)
 

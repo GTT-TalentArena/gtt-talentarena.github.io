@@ -2,13 +2,13 @@
 
 import { useEffect } from "react"
 
-/** Apunta dónde queda el balón de la portada dentro de la preview (en px de la preview). */
+/** Records where the home page ball sits inside the preview (in preview px). */
 export function BallSlot({ frame, scale }: { frame: string; scale: number }) {
   useEffect(() => {
     const iframe = document.getElementById(frame) as HTMLIFrameElement | null
     if (!iframe) return
     const measure = () => {
-      // el visible: en escritorio, el del anillo (el de móvil está oculto)
+      // the visible one: on desktop, the one in the ring (the mobile one is hidden)
       const ball = [...(iframe.contentDocument?.querySelectorAll("svg[data-ball]") ?? [])].find(
         (b) => b.getBoundingClientRect().width > 0,
       )

@@ -5,19 +5,19 @@ import { BALL_START, BALL_TILT, apply, facePaths, faces, fromSpinTilt, mul, orth
 
 type V = [number, number, number]
 
-/** Giro tranquilo cuando nadie lo toca (rad/s, ejes de pantalla). */
+/** Calm spin when nobody touches it (rad/s, screen axes). */
 const IDLE: V = [0, 0.32, 0]
 const MAX_SPIN = 28
 const KICK_SPIN = 11
 const KICK_PUSH = 460
 
 /**
- * El balón de GTT: un icosaedro truncado dibujado como una malla de datos. Pentágonos en
- * blaugrana, hexágonos abiertos, nodos en cada vértice y la cara oculta en rayos X.
+ * The GTT ball: a truncated icosahedron drawn as a data mesh. Pentagons in
+ * blaugrana, open hexagons, nodes at each vertex and the hidden side in X-ray.
  *
- * Se puede chutar: al arrastrarlo gira con el puntero y al soltarlo sale con la velocidad del
- * gesto; un clic sin arrastrar es un toque en ese punto (gira y se aparta del golpe). Después
- * frena hasta volver a su giro tranquilo. Quieto con `still`; sin giro propio con «Reducir movimiento».
+ * It can be kicked: dragging it spins it with the pointer and releasing it sends it off with the
+ * gesture's speed; a click without dragging is a touch at that point (it spins and moves away from
+ * the hit). Then it slows down back to its calm spin. Still with `still`; no spin of its own with "Reduce motion".
  */
 export function DataBall({ className = "", still = false }: { className?: string; still?: boolean }) {
   const svg = useRef<SVGSVGElement>(null)
@@ -71,13 +71,13 @@ export function DataBall({ className = "", still = false }: { className?: string
       last = now
       if (!visible || document.hidden) return
       if (!drag) {
-        // rozamiento: vuelve poco a poco al giro tranquilo
+        // friction: gradually returns to the calm spin
         const f = 1 - Math.exp(-dt * 0.9)
         w = [w[0] + (idle[0] - w[0]) * f, w[1] + (idle[1] - w[1]) * f, w[2] + (idle[2] - w[2]) * f]
         const speed = Math.hypot(...w)
         turn(w, speed * dt)
       }
-      // muelle que devuelve el balón a su sitio tras el golpe
+      // spring that brings the ball back to its place after the hit
       const ax = -90 * off.x - 11 * off.vx
       const ay = -90 * off.y - 11 * off.vy
       off.vx += ax * dt
@@ -109,7 +109,7 @@ export function DataBall({ className = "", still = false }: { className?: string
       const dy = e.clientY - drag.y
       const dt = Math.max(0.008, (now - drag.t) / 1000)
       const k = Math.PI / el.getBoundingClientRect().width
-      // arrastrar a la derecha gira la cara visible hacia la derecha (eje vertical), y así con todo
+      // dragging right turns the visible side to the right (vertical axis), and so on
       turn([-dy, dx, 0], Math.hypot(dx, dy) * k)
       const inst: V = [(-dy * k) / dt, (dx * k) / dt, 0]
       w = [w[0] * 0.5 + inst[0] * 0.5, w[1] * 0.5 + inst[1] * 0.5, 0]
@@ -124,7 +124,7 @@ export function DataBall({ className = "", still = false }: { className?: string
       if (!drag) return
       const p = local(e)
       if (drag.moved) {
-        // chute: sale con la velocidad del gesto (si el puntero se paró antes de soltar, no hay chute)
+        // kick: it leaves with the gesture's speed (if the pointer stopped before release, there's no kick)
         if (performance.now() - drag.t > 90) w = [0, 0, 0]
         const s = Math.hypot(...w)
         if (s > MAX_SPIN) w = [(w[0] / s) * MAX_SPIN, (w[1] / s) * MAX_SPIN, 0]
@@ -132,7 +132,7 @@ export function DataBall({ className = "", still = false }: { className?: string
         off.vx += Math.max(-600, Math.min(600, (w[1] / k) * 0.12))
         off.vy += Math.max(-600, Math.min(600, (-w[0] / k) * 0.12))
       } else {
-        // toque: el balón se aparta del punto de contacto y rueda en esa dirección
+        // touch: the ball moves away from the contact point and rolls in that direction
         let px = -p.x
         let py = -p.y
         const n = Math.hypot(px, py)
@@ -155,7 +155,7 @@ export function DataBall({ className = "", still = false }: { className?: string
       } catch {}
     }
 
-    // si el navegador se queda el gesto (el dedo hace scroll), se suelta el balón sin chutarlo
+    // if the browser takes over the gesture (the finger scrolls), the ball is released without kicking it
     const onCancel = () => {
       drag = null
       w = [...idle]

@@ -46,7 +46,7 @@ export function Challenge() {
   )
 }
 
-/** Las cuatro etiquetas del reto (H/A/D/X). */
+/** The challenge's four labels (H/A/D/X). */
 export function Labels() {
   return (
     <ul className="mt-8 space-y-2 border-t border-line pt-4">
@@ -62,7 +62,7 @@ export function Labels() {
   )
 }
 
-/** Las cifras del reto, en grande. */
+/** The challenge's numbers, large. */
 export function StatsRow({ className = "" }: { className?: string }) {
   return (
     <dl className={`grid grid-cols-2 lg:grid-cols-4 ${className}`}>

@@ -1,6 +1,6 @@
 import { DataBall } from "@/components/data-ball"
 
-/** Avatar de la organización en GitHub: 500×500. El balón hace de punto del logo. */
+/** The organisation's GitHub avatar: 500×500. The ball is the logo's dot. */
 export default function AvatarPreview() {
   return (
     <div className="grid size-[500px] place-items-center bg-ink text-paper">

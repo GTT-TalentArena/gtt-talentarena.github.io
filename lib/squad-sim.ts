@@ -1,22 +1,22 @@
 /**
- * El partidillo de la plantilla: los cinco del 1-2-2 se mueven por nuestro medio campo y
- * se dan pases, como el partido de «Who has the ball?» pero sin rival.
+ * The squad's kickabout: the five players of the 1-2-2 move around our half and pass to each
+ * other, like the match in "Who has the ball?" but without opponents.
  *
- * El jugador seleccionado (ratón encima, foco o toque) se queda quieto y no toca el balón: un pase
- * hacia él pasa de largo. Si el balón sale del medio campo, todo se para hasta que se suelta la
- * selección, y el partido vuelve a empezar desde la portería.
+ * The selected player (hovered, focused or tapped) stands still and doesn't touch the ball: a pass
+ * to them runs past. If the ball leaves the half, everything stops until the selection is
+ * released, and the game restarts from the goal.
  *
- * Inventada, como lib/pitch-sim.ts: no usa datos del partido. Determinista por semilla.
+ * Invented, like lib/pitch-sim.ts: it uses no match data. Deterministic by seed.
  */
 
 import { clamp, dist, mulberry32 } from "@/lib/pitch-sim"
 
-/** Medio campo en metros: x desde la banda izquierda, y desde la línea de medio campo. */
+/** Half pitch in metres: x from the left touchline, y from the halfway line. */
 export const HALF = { w: 68, h: 52.5 } as const
 export const FPS = 30
-/** Segundos de partido por segundo real: al ritmo del partido de «Who has the ball?». */
+/** Match seconds per real second: at the pace of the match in "Who has the ball?". */
 const PACE = 1
-/** Frenada del balón en m/s²: un pase de 18 m tarda un segundo, como en lib/pitch-sim.ts. */
+/** Ball deceleration in m/s²: an 18 m pass takes one second, as in lib/pitch-sim.ts. */
 const ROLL = 9
 
 export type Mate = {
@@ -40,18 +40,18 @@ type State =
 export class SquadSim {
   mates: Mate[]
   ball = { x: 0, y: 0, vx: 0, vy: 0 }
-  /** Jugador seleccionado: quieto y sin tocar el balón. */
+  /** Selected player: still and not touching the ball. */
   selected: number | null = null
-  /** Radio de la ficha en metros más el balón: a esa distancia un jugador controla el balón. */
+  /** Card radius in metres plus the ball: at that distance a player controls the ball. */
   reach = 3
   private state: State
   private frame = 0
   private t = 0
   private rng: () => number
   private gk: number
-  /** Quién dio el último pase: se le devuelve menos. */
+  /** Who made the last pass: it is passed back to them less often. */
   private from = -1
-  /** Hacia dónde tiene el balón el portador (vector unitario). */
+  /** Where the carrier has the ball (unit vector). */
   private face: [number, number] = [0, -1]
 
   constructor(spots: [number, number][], gk: number, seed = 5) {
@@ -71,12 +71,12 @@ export class SquadSim {
     this.placeBall()
   }
 
-  /** Parado porque el balón ha salido: espera a que se suelte la selección. */
+  /** Stopped because the ball went out: waits for the selection to be released. */
   get paused() {
     return this.state.kind === "out"
   }
 
-  /** Tantos frames como esos segundos de partido, a partir de ahora. */
+  /** As many frames as those match seconds, from now on. */
   private secs(min: number, max: number) {
     return this.frame + Math.round(((min + this.rng() * (max - min)) * FPS) / PACE)
   }
@@ -101,7 +101,7 @@ export class SquadSim {
   private gain(i: number) {
     const m = this.mates[i]
     const d = dist(this.ball.x, this.ball.y, m.x, m.y) || 1
-    // el balón se queda del lado por el que llegó
+    // the ball stays on the side it came from
     this.face = [(this.ball.x - m.x) / d, (this.ball.y - m.y) / d]
     this.ball.vx = this.ball.vy = 0
     this.state = { kind: "held", carrier: i, until: this.secs(0.5, 1.8) }
@@ -132,7 +132,7 @@ export class SquadSim {
     const dx = toX - this.ball.x
     const dy = toY - this.ball.y
     const d = Math.hypot(dx, dy) || 1
-    // algo más fuerte de lo justo: el receptor lo para, y si no lo toca el balón sigue de largo
+    // a bit harder than needed: the receiver stops it, and if they don't touch it the ball runs on
     const v0 = Math.sqrt(2 * ROLL * (d * 1.3 + 6))
     this.ball.vx = (dx / d) * v0
     this.ball.vy = (dy / d) * v0
@@ -181,7 +181,7 @@ export class SquadSim {
         const d = dist(b.x, b.y, m.x, m.y)
         const past = (b.x - m.x) * b.vx + (b.y - m.y) * b.vy > 0
         if (this.free(s.receiver) && d < this.reach) this.gain(s.receiver)
-        // el seleccionado no la toca: sigue rodando y la recoge quien llegue
+        // the selected player doesn't touch it: it keeps rolling and whoever arrives picks it up
         else if ((past && d > this.reach) || Math.hypot(b.vx, b.vy) < 0.3) this.state = { kind: "loose" }
       } else {
         const i = this.nearestFree(b.x, b.y)
@@ -213,7 +213,7 @@ export class SquadSim {
     const s = this.state
     const bx = clamp(this.ball.x, 0, HALF.w)
     const by = clamp(this.ball.y, 0, HALF.h)
-    // el portero no sale de su área: fuera de ella, el balón suelto lo persigue un jugador de campo
+    // the keeper doesn't leave the box: outside it, a loose ball is chased by an outfield player
     const inBox = bx > 26 && bx < 42 && by > 40
     const chaser = s.kind === "loose" ? this.nearestFree(bx, by, !inBox) : -1
     const gap = this.reach * 2 + 1.2
@@ -235,7 +235,7 @@ export class SquadSim {
         tx = m.anchorX + (bx - m.anchorX) * 0.12
         ty = m.anchorY + 0.8 * Math.sin(this.t * 0.4 * f + p2)
       } else {
-        // cada uno cerca de su sitio, arrastrado un poco por el balón y moviéndose como en un partido
+        // each one near their spot, pulled a little by the ball and moving like in a match
         tx = m.anchorX + (bx - HALF.w / 2) * 0.16 + 3.6 * Math.sin(this.t * 0.5 * f + p1)
         ty = m.anchorY + (by - HALF.h / 2) * 0.14 + 3 * Math.sin(this.t * 0.38 * f + p2)
       }
@@ -248,7 +248,7 @@ export class SquadSim {
 
       let dvx = (tx - m.x) * 0.9
       let dvy = (ty - m.y) * 0.9
-      // sin pisarse: las fichas son grandes
+      // no overlapping: the cards are big
       this.mates.forEach((o, j) => {
         if (j === i) return
         const d = dist(m.x, m.y, o.x, o.y)
@@ -272,7 +272,7 @@ export class SquadSim {
       }
     })
 
-    // el portador gira el balón poco a poco hacia donde va
+    // the carrier gradually turns the ball towards where they're going
     if (s.kind === "held") {
       const c = this.mates[s.carrier]
       const sp = Math.hypot(c.vx, c.vy)

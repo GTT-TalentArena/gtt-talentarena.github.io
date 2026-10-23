@@ -1,12 +1,12 @@
 /**
- * SVG animados para el README de la organización, con la misma técnica que el header.svg de
- * jimy-k4/jimy-k4: fuentes embebidas (subconjunto de Google Fonts con solo los caracteres que se
- * usan) y animaciones SMIL, que GitHub sí reproduce dentro de una <img>. Respetan «Reducir movimiento».
+ * Animated SVGs for the organisation README, with the same technique as jimy-k4/jimy-k4's
+ * header.svg: embedded fonts (a Google Fonts subset with only the characters used) and SMIL
+ * animations, which GitHub does play inside an <img>. They respect "Reduce motion".
  *
- *   banner.svg → la cabecera, 100 % vectorial: titular, lema, anillo girando y el balón rodando
- *   site.svg   → la web en una ventana (captura .cache/site-bg.png) con el balón animado encima
+ *   banner.svg → the header, 100% vector: headline, motto, spinning ring and the rolling ball
+ *   site.svg   → the site in a window (screenshot .cache/site-bg.png) with the animated ball on top
  *
- * Lo llama scripts/previews.ts al final (necesita red para pedir las fuentes).
+ * Called by scripts/previews.ts at the end (it needs network access to fetch the fonts).
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs"
 import { join, resolve } from "node:path"
@@ -29,7 +29,7 @@ const C = {
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
-// ─── Fuentes: subconjunto de Google Fonts con los caracteres justos ─────────────────────────
+// ─── Fonts: Google Fonts subset with just the characters needed ─────────────────────────────
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
 
 async function font(family: string, text: string) {
@@ -38,13 +38,13 @@ async function font(family: string, text: string) {
     await fetch(`https://fonts.googleapis.com/css2?family=${family}&text=${encodeURIComponent(chars)}`, { headers: { "user-agent": UA } })
   ).text()
   const url = css.match(/src:\s*url\((https:[^)]+)\)\s*format\(['"]woff2['"]\)/)?.[1]
-  if (!url) throw new Error(`Google Fonts no devolvió woff2 para ${family}:\n${css.slice(0, 300)}`)
+  if (!url) throw new Error(`Google Fonts returned no woff2 for ${family}:\n${css.slice(0, 300)}`)
   return Buffer.from(await (await fetch(url)).arrayBuffer()).toString("base64")
 }
 
-// ─── El balón en SMIL: una vuelta completa sobre su eje, en bucle sin saltos ────────────────
-const STEPS = 36 // fotogramas clave por vuelta; entre ellos el navegador interpola los vértices
-const SPIN_S = 24 // segundos por vuelta (como el giro tranquilo de la web)
+// ─── The ball in SMIL: one full turn on its axis, looping seamlessly ───────────────────────
+const STEPS = 36 // keyframes per turn; between them the browser interpolates the vertices
+const SPIN_S = 24 // seconds per turn (like the site's calm spin)
 
 function ball(id: string, cx: number, cy: number, r: number, animated: boolean) {
   const n = animated ? STEPS : 0
@@ -52,7 +52,7 @@ function ball(id: string, cx: number, cy: number, r: number, animated: boolean) 
   const f = (v: number) => String(Math.round(v * r * 10) / 10)
   const front = (k: number, i: number) => faces[i].idx.reduce((s, v) => s + frames[k][v][2], 0) > 0
   const dur = `${SPIN_S}s`
-  // lineal: n+1 valores (el último = el primero, bucle sin salto); discreta: n valores, mismos tramos
+  // linear: n+1 values (the last = the first, seamless loop); discrete: n values, same intervals
   const anim = (attr: string, values: (string | number)[], discrete = false) =>
     animated
       ? `<animate attributeName="${attr}" dur="${dur}" repeatCount="indefinite"${discrete ? ' calcMode="discrete"' : ""} values="${(discrete ? values.slice(0, -1) : values).join(";")}"/>`
@@ -81,7 +81,7 @@ function ball(id: string, cx: number, cy: number, r: number, animated: boolean) 
 </g>`
 }
 
-// ─── Anillo de instrumento alrededor del balón (texto en mono + 60 marcas) ──────────────────
+// ─── Instrument ring around the ball (mono text + 60 ticks) ────────────────────────────────
 const RING = "More than a Hack 2027 · Talent Arena · Barcelona · 41.35°N 2.13°E · Frame by frame · ".toUpperCase()
 
 function ring(id: string, cx: number, cy: number, size: number, animated: boolean) {
@@ -124,7 +124,7 @@ async function banner() {
     font("Geist+Mono:wght@100..900", [...meta, gloss, status, RING].join("")),
   ])
 
-  // badge: mismo tamaño y sitio que en la cabecera de la web (app/previews/banner)
+  // badge: same size and place as in the site header (app/previews/banner)
   const bx = 1137
   const by = 149
   const size = 190

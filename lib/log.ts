@@ -1,118 +1,119 @@
 /**
  * ════════════════════════════════════════════════════════════════════════════════════════════
- *  LOG DE GTT · INSTRUCCIONES PARA LLMs (Claude, Codex, Copilot…) Y PERSONAS
+ *  GTT LOG · INSTRUCTIONS FOR LLMs (Claude, Codex, Copilot…) AND PEOPLE
  * ════════════════════════════════════════════════════════════════════════════════════════════
  *
- *  ── Qué es (y qué NO es) ───────────────────────────────────────────────────────────────────
- *  El log (/log) registra el trabajo sobre el MODELO DE POSESIÓN: lo que estudiamos, las
- *  mejoras que encontramos y las pruebas que hacemos sobre el repositorio principal del proyecto:
- *  nuestro fork del reto, https://github.com/GTT-TalentArena/more-than-a-hack-2027
+ *  ── What it is (and what it is NOT) ────────────────────────────────────────────────────────
+ *  The log (/log) records the work on the POSSESSION MODEL: what we study, the improvements we
+ *  find and the tests we run on the project's main repository: our fork of the challenge,
+ *  https://github.com/GTT-TalentArena/more-than-a-hack-2027
  *
- *  NO es un registro de cambios de esta web. Cambios de diseño, textos, tipografía o páginas de la
- *  web van en los commits de este repositorio, nunca en el log.
+ *  It is NOT a changelog of this website. Changes to the site's design, text, typography or pages
+ *  go in this repository's commits, never in the log.
  *
- *  ── Focos actuales del modelo (y etiquetas recomendadas) ───────────────────────────────────
- *    reglas H/A/D/X ................ rules
- *    cambios de posesión ........... possession-change
- *    continuidad temporal .......... temporal-continuity
- *    histéresis .................... hysteresis
- *    duración mínima ............... min-duration
- *    suavizado ..................... smoothing
- *    estado del arte ............... state-of-the-art
- *  Usa estas etiquetas cuando toque para que las entradas de un mismo tema se puedan seguir.
+ *  Everything is written in ENGLISH (see CONTRIBUTING.md).
  *
- *  ── Cómo trabajamos (de dónde salen las entradas) ──────────────────────────────────────────
- *  1. Estudio: primero en ESPAÑOL, en un .md dentro de docs/ del fork (repo principal). Ese es el
- *     cuaderno de estudio y va APARTE: no se copia aquí, se resume y se enlaza.
- *  2. Cuando está claro y ANTES de programar nada: una entrada aquí, en inglés, para el resto del
- *     equipo, con lo encontrado y las mejoras propuestas, enlazando ese .md del fork.
- *  3. Al programar y probar: entradas de experiment / iteration con los resultados (también los
- *     que fallan), enlazando el commit o la PR del fork.
+ *  ── Current model focus areas (and recommended tags) ───────────────────────────────────────
+ *    H/A/D/X rules ................. rules
+ *    possession changes ............ possession-change
+ *    temporal continuity ........... temporal-continuity
+ *    hysteresis .................... hysteresis
+ *    minimum duration .............. min-duration
+ *    smoothing ..................... smoothing
+ *    state of the art .............. state-of-the-art
+ *  Use these tags when they apply so entries on the same topic can be followed.
  *
- *  ── Cuándo añadir una entrada ──────────────────────────────────────────────────────────────
- *  Cada vez que se termine algo del modelo que merezca contarse: un estudio, una mejora encontrada,
- *  una prueba, un cambio del modelo, una métrica medida, un enfoque descartado, una decisión.
- *  Un experimento fallido también es una entrada (outcome: failure). No se borran entradas del
- *  modelo: si algo resultó estar mal, se añade otra que lo corrija.
+ *  ── How we work (where entries come from) ──────────────────────────────────────────────────
+ *  1. Study: first, in a .md inside the fork's docs/ (main repo). That is the study notebook and
+ *     lives SEPARATELY: it isn't copied here; it is summarised and linked.
+ *  2. When it's clear and BEFORE coding anything: an entry here for the rest of the team, with
+ *     what was found and the proposed improvements, linking that .md in the fork.
+ *  3. While coding and testing: experiment / iteration entries with the results (including the
+ *     ones that fail), linking the fork's commit or PR.
  *
- *  ── Dónde y cómo se llama el fichero ───────────────────────────────────────────────────────
- *  content/log/AAAA-MM-DD-slug-corto.md      p. ej. content/log/2026-10-24-possession-hysteresis.md
- *  - Un fichero por entrada (así dos personas pueden añadir a la vez sin conflictos).
- *  - El slug: minúsculas, palabras separadas por guiones, en inglés. Es la URL: /log/<slug>.
- *  - Copia la plantilla: content/log/_template.md (los ficheros que empiezan por _ no se publican).
- *  - Imágenes o gráficas: public/log/<slug>/figura.png  →  en el Markdown: ![alt](/log/<slug>/figura.png)
+ *  ── When to add an entry ───────────────────────────────────────────────────────────────────
+ *  Whenever something on the model is finished that is worth telling: a study, an improvement
+ *  found, a test, a model change, a measured metric, a discarded approach, a decision.
+ *  A failed experiment is also an entry (outcome: failure). Model entries are never deleted:
+ *  if something turned out to be wrong, add another one that corrects it.
  *
- *  ── Cabecera (frontmatter YAML) ────────────────────────────────────────────────────────────
- *    title:    "Frase corta en inglés"                         (obligatorio)
- *    date:     2026-10-24                                      (obligatorio · día del trabajo)
- *    type:     study | code | experiment | iteration | data | decision     (obligatorio; change es automático)
- *    outcome:  success | failure | mixed | open                (obligatorio en experiment e iteration)
- *    authors:  [jimy-k4, hxst1]                                (obligatorio · handles de GitHub de lib/content.ts → squad)
- *    summary:  "Una o dos frases: qué se hizo y qué salió."     (obligatorio · sale en la lista)
- *    model:    hmm-viterbi                                     (opcional · modelo medido, en minúsculas y con guiones)
- *    version:  v2                                              (obligatorio si hay model · v1, v2… o un nombre corto)
- *    metrics:                                                  (opcional · números, no texto)
- *      - name: spellF1          # spellF1 | macroF1 | u otra métrica con nombre claro
+ *  ── Where the file goes and what it's called ───────────────────────────────────────────────
+ *  content/log/YYYY-MM-DD-short-slug.md      e.g. content/log/2026-10-24-possession-hysteresis.md
+ *  - One file per entry (so two people can add at the same time without conflicts).
+ *  - The slug: lowercase, words separated by hyphens, in English. It is the URL: /log/<slug>.
+ *  - Copy the template: content/log/_template.md (files starting with _ are not published).
+ *  - Images or charts: public/log/<slug>/figure.png  →  in the Markdown: ![alt](/log/<slug>/figure.png)
+ *
+ *  ── Header (YAML front matter) ─────────────────────────────────────────────────────────────
+ *    title:    "Short sentence"                                (required)
+ *    date:     2026-10-24                                      (required · day of the work)
+ *    type:     study | code | experiment | iteration | data | decision     (required; change is automatic)
+ *    outcome:  success | failure | mixed | open                (required for experiment and iteration)
+ *    authors:  [jimy-k4, hxst1]                                (required · GitHub handles from lib/content.ts → squad)
+ *    summary:  "One or two sentences: what was done and what came out."   (required · shown in the list)
+ *    model:    hmm-viterbi                                     (optional · model measured, lowercase with hyphens)
+ *    version:  v2                                              (required if there is a model · v1, v2… or a short name)
+ *    metrics:                                                  (optional · numbers, not text)
+ *      - name: spellF1          # spellF1 | macroF1 | or another clearly named metric
  *        value: 0.3120
- *        before: 0.2433         # opcional: valor de referencia para mostrar la mejora
- *        split: public-5min     # opcional: dónde se midió (public-5min, full-match, dfl-cv…)
- *        better: higher         # opcional: higher (por defecto) | lower
- *        low: 0.2810            # opcional, con high: intervalo de bootstrap (run_evaluation.py --bootstrap 1000)
+ *        before: 0.2433         # optional: reference value to show the improvement
+ *        split: public-5min     # optional: where it was measured (public-5min, full-match, dfl-cv…)
+ *        better: higher         # optional: higher (default) | lower
+ *        low: 0.2810            # optional, with high: bootstrap interval (run_evaluation.py --bootstrap 1000)
  *        high: 0.3390
- *        model: rules           # opcional: otro modelo/versión solo para esta métrica (comparar variantes)
+ *        model: rules           # optional: another model/version for this metric only (to compare variants)
  *        version: v1
  *
- *  ── La gráfica de resultados (arriba en /log) ──────────────────────────────────────────────
- *  Cada métrica con modelo y versión es un punto: eje X = date, eje Y = value, una línea por
- *  modelo que une sus versiones. Se elige métrica y split arriba de la gráfica; solo se comparan
- *  puntos del mismo split. Cada punto enlaza a su entrada, y la entrada muestra su modelo con el
- *  mismo color. Las líneas de referencia (baseline publicado) están en lib/log-meta.ts → references.
- *  Usa SIEMPRE el mismo nombre de modelo para sus versiones (hmm-viterbi v1, v2…): un nombre
- *  distinto es otra línea.
- *    tags:     [hysteresis, smoothing]                         (opcional · ver «Focos actuales»)
- *    links:                                                    (opcional · siempre al fork: docs/, commit, PR, Jupyter)
- *      - label: "Study (ES)"
- *        href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/docs/<estudio>.md
+ *  ── The results chart (at the top of /log) ─────────────────────────────────────────────────
+ *  Each metric with a model and version is a point: X axis = date, Y axis = value, one line per
+ *  model joining its versions. The metric and split are chosen above the chart; only points from
+ *  the same split are compared. Each point links to its entry, and the entry shows its model in
+ *  the same colour. The reference lines (published baseline) are in lib/log-meta.ts → references.
+ *  ALWAYS use the same model name for its versions (hmm-viterbi v1, v2…): a different name is
+ *  another line.
+ *    tags:     [hysteresis, smoothing]                         (optional · see "Current focus areas")
+ *    links:                                                    (optional · always to the fork: docs/, commit, PR, Jupyter)
+ *      - label: "Study"
+ *        href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/docs/<study>.md
  *
- *  Qué es cada type (todo sobre el modelo y el repo principal):
- *    study      estudiar: papers, estado del arte, documentación del reto, otros enfoques
- *    code       programar en el fork: pipeline, carga de datos, herramientas de evaluación
- *    experiment probar una hipótesis concreta, con resultado (outcome obligatorio)
- *    iteration  nueva versión del modelo comparada con la anterior (outcome obligatorio)
- *    data       explorar el tracking: patrones, huecos, cambios de identidad, balón invisible
- *    decision   algo que el equipo decide sobre el modelo o el repo, y por qué (tipo ADR)
- *    change     AUTOMÁTICA: una por cada PR fusionado en main del fork. La genera y sube el workflow
- *               .github/workflows/publish-pr-log.yml del fork. No la escribas a mano.
+ *  What each type means (everything is about the model and the main repo):
+ *    study      studying: papers, state of the art, challenge documentation, other approaches
+ *    code       coding in the fork: pipeline, data loading, evaluation tools
+ *    experiment testing a specific hypothesis, with a result (outcome required)
+ *    iteration  a new model version compared with the previous one (outcome required)
+ *    data       exploring the tracking: patterns, gaps, identity switches, invisible ball
+ *    decision   something the team decides about the model or the repo, and why (ADR-style)
+ *    change     AUTOMATIC: one per PR merged into the fork's main. It is generated and pushed by the
+ *               fork's .github/workflows/publish-pr-log.yml workflow. Don't write it by hand.
  *
- *  ── Cuerpo (Markdown) ──────────────────────────────────────────────────────────────────────
- *  En inglés (la web está en inglés; el estudio largo en español vive en docs/ del fork).
- *  Estructura recomendada, con ## para cada bloque:
- *    ## Context     por qué lo hicimos
- *    ## What we did lo que se hizo, con detalle suficiente para repetirlo (comandos, parámetros)
- *    ## Result      qué salió, con números; si falló, por qué creemos que falló
- *    ## Next        qué viene después
- *  Se admite Markdown con GFM: tablas, listas, `código`, bloques ```, citas e imágenes.
+ *  ── Body (Markdown) ────────────────────────────────────────────────────────────────────────
+ *  Recommended structure, with ## for each block:
+ *    ## Context     why we did it
+ *    ## What we did what was done, in enough detail to repeat it (commands, parameters)
+ *    ## Result      what came out, with numbers; if it failed, why we think it failed
+ *    ## Next        what comes next
+ *  GFM Markdown is supported: tables, lists, `code`, ``` blocks, quotes and images.
  *
- *  ── Figuras (todo lo visual que se pueda) ──────────────────────────────────────────────────
- *  Bloques de código con estos lenguajes se dibujan como figuras al compilar (lib/log-viz.ts, con
- *  la sintaxis completa encima de cada función):
- *    ```timeline  tiras H/A/D/X en el tiempo, con spellF1 calculado como el scorer del reto;
- *                 admite transformaciones (=viterbi(raw, 2), =hold(raw)…) para enseñar un método
- *    ```pitch     el campo en uno o varios instantes: jugadores, balón, pases y la etiqueta
- *    ```bars      barras con su valor            ```stats  cifras grandes
- *    ```roadmap   pasos numerados (P0, P1…)
- *  Ejemplo completo: content/log/2026-10-21-who-has-the-ball.md. Si un bloque está mal, el build
- *  falla con un mensaje «[log] …». Lo que se dibuja es inventado: nunca datos del partido.
+ *  ── Figures (everything visual that can be) ────────────────────────────────────────────────
+ *  Code blocks with these languages are drawn as figures at build time (lib/log-viz.ts, with
+ *  the full syntax above each function):
+ *    ```timeline  H/A/D/X strips over time, with spellF1 computed like the challenge scorer;
+ *                 supports transformations (=viterbi(raw, 2), =hold(raw)…) to show a method
+ *    ```pitch     the pitch at one or more moments: players, ball, passes and the label
+ *    ```bars      bars with their value          ```stats  big numbers
+ *    ```roadmap   numbered steps (P0, P1…)
+ *  Full example: content/log/2026-10-21-who-has-the-ball.md. If a block is wrong, the build
+ *  fails with a "[log] …" message. What is drawn is invented: never match data.
  *
- *  ── Reglas que no se negocian (RULES.md del reto) ──────────────────────────────────────────
- *  - NUNCA pegues datos del partido: ni tracking, ni vídeo, ni etiquetas frame a frame, ni nada
- *    que permita reconstruirlos. Métricas agregadas y conclusiones, sí.
- *  - Nada del ground truth privado. Solo resultados medidos por nosotros.
- *  - Sé honesto: los números, tal cual salieron.
+ *  ── Non-negotiable rules (the challenge's RULES.md) ────────────────────────────────────────
+ *  - NEVER paste match data: no tracking, no video, no frame-by-frame labels, nor anything that
+ *    would allow them to be reconstructed. Aggregate metrics and conclusions, yes.
+ *  - Nothing from the private ground truth. Only results we measured ourselves.
+ *  - Be honest: the numbers, exactly as they came out.
  *
- *  ── Comprobar ──────────────────────────────────────────────────────────────────────────────
- *  `npm run dev` y abre /log. Si una cabecera está mal, el build falla con un mensaje «[log] …»
- *  que dice qué fichero y qué campo arreglar. Al hacer push a main, la web se publica sola.
+ *  ── Check ──────────────────────────────────────────────────────────────────────────────────
+ *  `npm run dev` and open /log. If a header is wrong, the build fails with a "[log] …" message
+ *  saying which file and which field to fix. When you push to main, the site publishes itself.
  * ════════════════════════════════════════════════════════════════════════════════════════════
  */
 import fs from "node:fs"
@@ -129,65 +130,65 @@ const DIR = path.join(process.cwd(), "content/log")
 const handles = new Set(squad.map((p) => p.github).filter(Boolean))
 
 function fail(file: string, msg: string): never {
-  throw new Error(`[log] ${file}: ${msg}. Ver las instrucciones al principio de lib/log.ts`)
+  throw new Error(`[log] ${file}: ${msg}. See the instructions at the top of lib/log.ts`)
 }
 
 function parse(file: string): LogEntry {
   const raw = fs.readFileSync(path.join(DIR, file), "utf8").replace(/\r\n/g, "\n")
   const m = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
-  if (!m) fail(file, "falta la cabecera YAML entre líneas ---")
+  if (!m) fail(file, "missing YAML header between --- lines")
   const data = (parseYaml(m[1]) ?? {}) as Record<string, unknown>
   const body = m[2].trim()
 
   const slug = file.replace(/\.md$/, "").replace(/^\d{4}-\d{2}-\d{2}-/, "")
-  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) fail(file, "el nombre debe ser AAAA-MM-DD-slug-en-minusculas.md")
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) fail(file, "the name must be YYYY-MM-DD-lowercase-slug.md")
 
   const str = (k: string, required = true) => {
     const v = data[k]
-    if (v === undefined || v === null || v === "") return required ? fail(file, `falta «${k}»`) : undefined
+    if (v === undefined || v === null || v === "") return required ? fail(file, `missing "${k}"`) : undefined
     return String(v)
   }
 
-  // YAML convierte 2026-10-24 en Date: lo normalizamos a texto
+  // YAML turns 2026-10-24 into a Date: normalise it back to text
   const rawDate = data.date instanceof Date ? data.date.toISOString().slice(0, 10) : str("date")
-  if (!rawDate || !/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) fail(file, "«date» debe ser AAAA-MM-DD")
+  if (!rawDate || !/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) fail(file, "\"date\" must be YYYY-MM-DD")
 
   const type = str("type") as LogType
-  if (!(type in logTypes)) fail(file, `«type» debe ser uno de: ${Object.keys(logTypes).join(", ")}`)
+  if (!(type in logTypes)) fail(file, `"type" must be one of: ${Object.keys(logTypes).join(", ")}`)
 
   const outcome = str("outcome", false) as Outcome | undefined
-  if (outcome && !(outcome in outcomes)) fail(file, `«outcome» debe ser uno de: ${Object.keys(outcomes).join(", ")}`)
-  if (!outcome && (type === "experiment" || type === "iteration")) fail(file, `«outcome» es obligatorio en ${type}`)
+  if (outcome && !(outcome in outcomes)) fail(file, `"outcome" must be one of: ${Object.keys(outcomes).join(", ")}`)
+  if (!outcome && (type === "experiment" || type === "iteration")) fail(file, `"outcome" is required for ${type}`)
 
   const authors = Array.isArray(data.authors) ? data.authors.map(String) : []
-  if (!authors.length) fail(file, "«authors» debe ser una lista de handles de GitHub")
+  if (!authors.length) fail(file, "\"authors\" must be a list of GitHub handles")
   const unknown = authors.filter((a) => !handles.has(a))
-  if (unknown.length) fail(file, `autores que no están en el squad (lib/content.ts): ${unknown.join(", ")}`)
+  if (unknown.length) fail(file, `authors who aren't in the squad (lib/content.ts): ${unknown.join(", ")}`)
 
-  // modelo y versión de la entrada: valen para todas sus métricas salvo que una diga otro
+  // the entry's model and version: they apply to all its metrics unless one says otherwise
   const entryModel = str("model", false)
   const entryVersion = str("version", false)
 
   const metrics: Metric[] = (Array.isArray(data.metrics) ? data.metrics : []).map((x: Record<string, unknown>, i: number) => {
     const value = Number(x?.value)
-    if (!x?.name || Number.isNaN(value)) fail(file, `metrics[${i}] necesita «name» y un «value» numérico`)
+    if (!x?.name || Number.isNaN(value)) fail(file, `metrics[${i}] needs "name" and a numeric "value"`)
     const num = (k: string) => {
       if (x[k] === undefined) return undefined
       const n = Number(x[k])
-      return Number.isNaN(n) ? fail(file, `metrics[${i}].${k} debe ser un número`) : n
+      return Number.isNaN(n) ? fail(file, `metrics[${i}].${k} must be a number`) : n
     }
     const before = num("before")
     const low = num("low")
     const high = num("high")
-    if ((low === undefined) !== (high === undefined)) fail(file, `metrics[${i}] necesita «low» y «high» a la vez`)
-    if (low !== undefined && high !== undefined && low > high) fail(file, `metrics[${i}]: «low» no puede ser mayor que «high»`)
+    if ((low === undefined) !== (high === undefined)) fail(file, `metrics[${i}] needs "low" and "high" together`)
+    if (low !== undefined && high !== undefined && low > high) fail(file, `metrics[${i}]: "low" can't be greater than "high"`)
 
     const model = x.model ? String(x.model) : entryModel
     const version = x.version ? String(x.version) : entryVersion
     if (model && !/^[a-z0-9]+([-_.][a-z0-9]+)*$/.test(model))
-      fail(file, `metrics[${i}]: el modelo «${model}» debe ir en minúsculas y con guiones (p. ej. hmm-viterbi)`)
-    if (model && !version) fail(file, `metrics[${i}]: falta «version» para el modelo «${model}» (p. ej. v1)`)
-    if (version && !model) fail(file, `metrics[${i}]: hay «version» pero falta «model»`)
+      fail(file, `metrics[${i}]: the model "${model}" must be lowercase with hyphens (e.g. hmm-viterbi)`)
+    if (model && !version) fail(file, `metrics[${i}]: "version" is missing for the model "${model}" (e.g. v1)`)
+    if (version && !model) fail(file, `metrics[${i}]: there is a "version" but "model" is missing`)
 
     return {
       name: String(x.name),
@@ -203,7 +204,7 @@ function parse(file: string): LogEntry {
   })
 
   const links = (Array.isArray(data.links) ? data.links : []).map((l: Record<string, unknown>, i: number) => {
-    if (!l?.label || !l?.href) fail(file, `links[${i}] necesita «label» y «href»`)
+    if (!l?.label || !l?.href) fail(file, `links[${i}] needs "label" and "href"`)
     return { label: String(l.label), href: String(l.href) }
   })
 
@@ -225,7 +226,7 @@ function parse(file: string): LogEntry {
   }
 }
 
-// Markdown → HTML; los bloques ```timeline, ```pitch, ```bars, ```stats y ```roadmap son figuras (lib/log-viz.ts)
+// Markdown → HTML; the ```timeline, ```pitch, ```bars, ```stats and ```roadmap blocks are figures (lib/log-viz.ts)
 const md = new Marked({
   gfm: true,
   async: false,
@@ -238,7 +239,7 @@ const md = new Marked({
 
 function toHtml(file: string, body: string) {
   try {
-    // las tablas anchas se desplazan en horizontal dentro de su caja en vez de ensanchar la página
+    // wide tables scroll horizontally inside their box instead of widening the page
     return (md.parse(body) as string).replace(/<table>/g, '<div class="prose-table"><table>').replace(/<\/table>/g, "</table></div>")
   } catch (e) {
     if (e instanceof VizError) fail(file, e.message)
@@ -248,17 +249,17 @@ function toHtml(file: string, body: string) {
 
 let cache: LogEntry[] | null = null
 
-/** Todas las entradas, de la más reciente a la más antigua. */
+/** All entries, newest first. */
 export function getEntries(): LogEntry[] {
   if (cache && process.env.NODE_ENV === "production") return cache
   const files = fs.existsSync(DIR) ? fs.readdirSync(DIR).filter((f) => f.endsWith(".md") && !f.startsWith("_")) : []
   const entries = files.map(parse)
   const seen = new Set<string>()
   for (const e of entries) {
-    if (seen.has(e.slug)) throw new Error(`[log] hay dos entradas con el slug «${e.slug}»: cambia el nombre de una`)
+    if (seen.has(e.slug)) throw new Error(`[log] two entries have the slug "${e.slug}": rename one of them`)
     seen.add(e.slug)
   }
-  // misma fecha: la de nombre de fichero mayor primero (los ficheros se ordenan por fecha + slug)
+  // same date: the larger file name first (files sort by date + slug)
   cache = entries.sort((a, b) => (a.date === b.date ? b.slug.localeCompare(a.slug) : b.date.localeCompare(a.date)))
   return cache
 }

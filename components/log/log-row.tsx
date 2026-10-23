@@ -3,7 +3,7 @@ import type { LogEntry } from "@/lib/log-meta"
 import { Arrow } from "@/components/icons"
 import { Authors, MetricPill, OutcomeChip, TypeChip } from "@/components/log/parts"
 
-/** Una entrada del log en la lista: fecha, chips, título, resumen y métricas. */
+/** A log entry in the list: date, chips, title, summary and metrics. */
 export function LogRow({
   entry: e,
   anchor = false,

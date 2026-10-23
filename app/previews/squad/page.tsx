@@ -1,7 +1,7 @@
 import { Lineup } from "@/components/lineup"
 import { Formation } from "@/components/squad"
 
-/** La plantilla en 1-2-2 para el README (el título lo pone el propio README): 1280×640. */
+/** The squad in a 1-2-2 for the README (the README provides the title): 1280×640. */
 export default function SquadPreview() {
   return (
     <div className="grid h-[640px] w-[1280px] grid-cols-[1fr_760px] items-center gap-12 bg-paper px-12 text-ink">

@@ -21,8 +21,8 @@ export const viewport: Viewport = {
   themeColor: "#f3eee6",
 }
 
-// Antes de pintar: marca que hay JS. Para las capturas del README (scripts/previews.ts):
-// ?still quita las animaciones de entrada y ?noball esconde el balón (se dibuja aparte, animado).
+// Before painting: flag that JS is on. For the README screenshots (scripts/previews.ts):
+// ?still removes the entry animations and ?noball hides the ball (it is drawn separately, animated).
 const bootScript = `(function(){var d=document.documentElement,q=location.search;d.classList.add('js');if(/[?&]still/.test(q))d.classList.add('still');if(/[?&]noball/.test(q))d.classList.add('noball')})()`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
-        {/* Visitas anónimas, sin cookies: https://jimy-superveil.vercel.app (no cuenta localhost ni navegadores automáticos) */}
+        {/* Anonymous visits, no cookies: https://jimy-superveil.vercel.app (doesn't count localhost or automated browsers) */}
         <script defer src="https://jimy-superveil.vercel.app/p.js" data-site="gtt" />
       </head>
       <body>

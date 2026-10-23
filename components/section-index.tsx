@@ -11,9 +11,9 @@ const sections = [
 ]
 
 /**
- * Índice de la portada: se queda fijo bajo la cabecera y marca la sección en la que estás.
- * La barra de arriba cambia de vista (Team / Log); este índice solo se mueve dentro de esta.
- * En móvil cabe entero: las secciones son números y solo la activa muestra su nombre.
+ * Home page index: stays fixed under the header and marks the section you're in.
+ * The top bar switches view (Team / Log); this index only moves within this one.
+ * On mobile it fits whole: sections are numbers and only the active one shows its name.
  */
 export function SectionIndex() {
   const [active, setActive] = useState<string | null>(null)
@@ -46,7 +46,7 @@ export function SectionIndex() {
     }
   }, [])
 
-  // por si no cabe (pantallas muy estrechas o texto grande): la activa siempre a la vista
+  // in case it doesn't fit (very narrow screens or large text): the active one always in view
   useEffect(() => {
     const ol = list.current
     const li = ol?.querySelector<HTMLElement>("[aria-current]")
@@ -72,7 +72,7 @@ export function SectionIndex() {
                   className="flex min-h-9 min-w-9 items-center justify-center gap-1.5 rounded-full px-3 text-sm text-ink/70 transition-colors hover:text-ink aria-[current=location]:bg-ink aria-[current=location]:text-paper"
                 >
                   <span className={`label text-[0.62rem] ${on ? "text-paper/60" : "text-accent"}`}>{s.n}</span>
-                  {/* en móvil solo se ve el nombre de la activa; los demás quedan para lectores de pantalla */}
+                  {/* on mobile only the active one's name shows; the others are left for screen readers */}
                   <span className={on ? "" : "sr-only sm:not-sr-only"}>{s.label}</span>
                 </a>
               </li>

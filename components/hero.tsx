@@ -15,7 +15,7 @@ export function Hero() {
         <div className="relative flex flex-1 flex-col justify-center py-8 sm:py-10">
           <Lockup />
           <BallBadge className="absolute right-0 top-[40%] hidden size-44 -translate-y-1/2 sm:block lg:size-56 xl:size-64" />
-          {/* en móvil, solo el balón (el texto del anillo no se leería): a la derecha de «GTT» */}
+          {/* on mobile, only the ball (the ring text wouldn't be readable): to the right of "GTT" */}
           <DataBall className="absolute right-0 top-7 size-[26vw] text-ink sm:hidden" />
         </div>
 
@@ -56,7 +56,7 @@ export function MetaRow() {
   )
 }
 
-/** «GTT» gigante + «Més que dades.». `as="div"` cuando no es el título de la página. */
+/** Giant "GTT" + "Més que dades." (Catalan: more than data). `as="div"` when it isn't the page title. */
 export function Lockup({ as: Tag = "h1" }: { as?: "h1" | "div" }) {
   return (
     <>

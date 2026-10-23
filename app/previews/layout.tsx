@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 /**
- * Lienzos a tamaño fijo para las imágenes del README de la organización y las social previews.
- * Se capturan con `npm run previews` (scripts/previews.ts). No se indexan.
+ * Fixed-size canvases for the organisation README images and the social previews.
+ * They are captured with `npm run previews` (scripts/previews.ts). Not indexed.
  */
 export const metadata: Metadata = { robots: { index: false, follow: false } }
 

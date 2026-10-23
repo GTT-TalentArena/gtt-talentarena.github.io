@@ -1,20 +1,20 @@
 /**
- * Figuras para las entradas del log, escritas en el propio Markdown como bloques de código con un
- * lenguaje especial. Se convierten en HTML/SVG al compilar (web estática, sin JavaScript):
+ * Figures for log entries, written in the Markdown itself as code blocks with a special
+ * language. They are turned into HTML/SVG at build time (static site, no JavaScript):
  *
- *   ```timeline   tiras de etiquetas H/A/D/X en el tiempo, con spellF1 calculado como el scorer
- *   ```pitch      el campo con jugadores, balón, pases y la etiqueta de ese instante
- *   ```bars       barras horizontales con su valor
- *   ```stats      cifras grandes con una línea de texto
- *   ```roadmap    pasos numerados (P0, P1…) con título y explicación
+ *   ```timeline   strips of H/A/D/X labels over time, with spellF1 computed like the scorer
+ *   ```pitch      the pitch with players, ball, passes and the label at that moment
+ *   ```bars       horizontal bars with their value
+ *   ```stats      big numbers with a line of text
+ *   ```roadmap    numbered steps (P0, P1…) with a title and explanation
  *
- * La sintaxis de cada bloque está encima de su función. Todo lo que se dibuja con estos bloques es
- * INVENTADO o sale de documentos públicos: nunca datos del partido (RULES.md del reto).
+ * Each block's syntax is above its function. Everything drawn with these blocks is INVENTED or
+ * comes from public documents: never match data (the challenge's RULES.md).
  */
 import { fillAbstentions, macroF1, spellF1, spells, type Label } from "@/lib/possession-score"
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
-// texto con `código` y **negrita** mínimos
+// text with minimal `code` and **bold**
 const inline = (s: string) =>
   esc(s)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
@@ -22,7 +22,7 @@ const inline = (s: string) =>
 
 const pct = (n: number) => `${+n.toFixed(3)}%`
 
-/** Separa las líneas `clave: valor` (opciones, en cualquier sitio y sin «|») de las filas con «|». */
+/** Separates `key: value` lines (options, anywhere and without "|") from rows with "|". */
 function split(src: string) {
   const opts: Record<string, string> = {}
   const body: string[] = []
@@ -43,26 +43,26 @@ const fail = (msg: string): never => {
 
 /* ─── timeline ──────────────────────────────────────────────────────────────────────────────────
  *  title: Toy match · invented
- *  cell: 0.2s                 duración de una celda (1s, 0.2s, 5 frames…), para el eje
- *  ticks: 10                  una marca cada 10 celdas
- *  score: spell | both | none spellF1 a la derecha (both = también macroF1); por defecto spell
- *  marks: 3 11 18             marcadores ①②③ sobre la verdad (enlazan con un bloque pitch)
- *  caption: texto bajo la figura
- *  Truth | HHHHHAAAADDDHHH    la primera fila es la verdad (se puede usar como «truth»); espacios ignorados
- *  @raw Nearest player | HH.AH.   @id para usarla luego; «.» = no se ve el balón
- *  Our answer | =viterbi(raw, 2)  transformaciones: hold baseline vote mindur hyst viterbi late fill
+ *  cell: 0.2s                 duration of one cell (1s, 0.2s, 5 frames…), for the axis
+ *  ticks: 10                  a tick every 10 cells
+ *  score: spell | both | none spellF1 on the right (both = macroF1 too); spell by default
+ *  marks: 3 11 18             markers ①②③ over the truth (they link to a pitch block)
+ *  caption: text under the figure
+ *  Truth | HHHHHAAAADDDHHH    the first row is the truth (it can be referred to as "truth"); spaces ignored
+ *  @raw Nearest player | HH.AH.   @id to use it later; "." = ball not visible
+ *  Our answer | =viterbi(raw, 2)  transformations: hold baseline vote mindur hyst viterbi late fill
  */
 const LABEL_SET = new Set(["H", "A", "D", "X", "."])
 
 type Cell = Label | "."
 
 const transforms: Record<string, (r: Cell[], n?: number) => Cell[]> = {
-  /** «.» (no se ve el balón) → la última etiqueta conocida: lo mismo que hace X en el scorer. */
+  /** "." (ball not visible) → the last known label: the same as X in the scorer. */
   hold: (r) => {
     let last: Cell = r.find((c) => c !== ".") ?? "H"
     return r.map((c) => (c === "." ? last : (last = c)))
   },
-  /** El baseline del reto: voto H/A en ±w celdas; si no se ve el balón en toda la ventana, D. */
+  /** The challenge baseline: H/A vote over ±w cells; if the ball isn't visible in the whole window, D. */
   baseline: (r, w = 2) =>
     r.map((_, i) => {
       let h = 0
@@ -73,7 +73,7 @@ const transforms: Record<string, (r: Cell[], n?: number) => Cell[]> = {
       }
       return h + a === 0 ? "D" : h >= a ? "H" : "A"
     }),
-  /** Voto de mayoría entre H, A y D en ±w celdas; en empate se queda la etiqueta propia. */
+  /** Majority vote between H, A and D over ±w cells; on a tie the cell keeps its own label. */
   vote: (r, w = 2) =>
     r.map((c, i) => {
       const n: Record<string, number> = { H: 0, A: 0, D: 0 }
@@ -83,7 +83,7 @@ const transforms: Record<string, (r: Cell[], n?: number) => Cell[]> = {
       if (c in n && n[c] === top) return c
       return (["H", "A", "D"] as const).find((k) => n[k] === top)!
     }),
-  /** Duración mínima: la racha más corta de menos de k celdas se une a su vecina más larga, hasta que no quede ninguna. */
+  /** Minimum duration: the shortest run under k cells merges into its longer neighbour, until none is left. */
   mindur: (r, k = 5) => {
     const out = [...r]
     for (;;) {
@@ -104,7 +104,7 @@ const transforms: Record<string, (r: Cell[], n?: number) => Cell[]> = {
       for (let t = runs[s].a; t < runs[s].b; t++) out[t] = out[into.a]
     }
   },
-  /** Histéresis: se cambia solo si la nueva etiqueta se mantiene k celdas vistas; el cambio se fecha al principio. */
+  /** Hysteresis: switch only if the new label holds for k visible cells; the change is dated at the start. */
   hyst: (r, k = 2) => {
     let state: Cell = r.find((c) => c !== ".") ?? "H"
     const out: Cell[] = []
@@ -123,7 +123,7 @@ const transforms: Record<string, (r: Cell[], n?: number) => Cell[]> = {
     }
     return out
   },
-  /** Viterbi con tres estados: coste 1 por contradecir lo observado y λ por cada cambio de estado. */
+  /** Three-state Viterbi: cost 1 for contradicting the observation and λ for each state change. */
   viterbi: (r, lambda = 2) => {
     const S = ["H", "A", "D"] as const
     const cost = (c: Cell, s: string) => (c === "." || c === "X" || c === s ? 0 : 1)
@@ -145,18 +145,18 @@ const transforms: Record<string, (r: Cell[], n?: number) => Cell[]> = {
     for (let t = back.length - 1; t >= 0; t--) out.unshift(S[(k = back[t][k])])
     return out
   },
-  /** La misma respuesta n celdas tarde: cada celda toma la etiqueta de n celdas antes. */
+  /** The same answer n cells late: each cell takes the label from n cells before. */
   late: (r, n = 1) => r.map((_, t) => r[Math.max(0, t - n)]),
-  /** Lo que lee el scorer: las X pasan a ser la etiqueta anterior. */
+  /** What the scorer reads: the X become the previous label. */
   fill: (r) => fillAbstentions(r.map((c) => (c === "." ? "X" : c)) as Label[]),
 }
 
 function evaluate(expr: string, rows: Map<string, Cell[]>): Cell[] {
   expr = expr.trim()
   const call = expr.match(/^([a-z]+)\((.*)\)$/)
-  if (!call) return rows.get(expr) ?? fail(`timeline: no hay ninguna fila «@${expr}»`)
-  const fn = transforms[call[1]] ?? fail(`timeline: no existe la transformación «${call[1]}»`)
-  // separa argumentos respetando los paréntesis anidados
+  if (!call) return rows.get(expr) ?? fail(`timeline: there is no row "@${expr}"`)
+  const fn = transforms[call[1]] ?? fail(`timeline: the transformation "${call[1]}" doesn't exist`)
+  // split arguments respecting nested parentheses
   const args: string[] = []
   let depth = 0
   let cur = ""
@@ -207,7 +207,7 @@ function timeline(src: string) {
   const list: { label: string; cells: Cell[] }[] = []
   for (const line of body) {
     const bar = line.indexOf("|")
-    if (bar < 0) fail(`timeline: falta «|» en «${line}»`)
+    if (bar < 0) fail(`timeline: missing "|" in "${line}"`)
     let label = line.slice(0, bar).trim()
     const rhs = line.slice(bar + 1).trim()
     let id: string | undefined
@@ -215,14 +215,14 @@ function timeline(src: string) {
     if (tag) [, id, label] = tag
     const cells: Cell[] = rhs.startsWith("=")
       ? evaluate(rhs.slice(1), rows)
-      : [...rhs.replace(/\s+/g, "")].map((c) => (LABEL_SET.has(c) ? (c as Cell) : fail(`timeline: «${c}» no es H, A, D, X ni «.»`)))
+      : [...rhs.replace(/\s+/g, "")].map((c) => (LABEL_SET.has(c) ? (c as Cell) : fail(`timeline: "${c}" is not H, A, D, X or "."`)))
     if (list.length && cells.length !== list[0].cells.length)
-      fail(`timeline: «${label}» tiene ${cells.length} celdas y la verdad ${list[0].cells.length}`)
+      fail(`timeline: "${label}" has ${cells.length} cells and the truth ${list[0].cells.length}`)
     if (id) rows.set(id, cells)
-    if (!list.length) rows.set("truth", cells) // la verdad siempre se puede usar como «truth»
+    if (!list.length) rows.set("truth", cells) // the truth can always be referred to as "truth"
     list.push({ label, cells })
   }
-  if (!list.length) fail("timeline: no hay filas")
+  if (!list.length) fail("timeline: no rows")
 
   const truth = list[0].cells as Label[]
   const n = truth.length
@@ -289,25 +289,25 @@ function timeline(src: string) {
 }
 
 /* ─── pitch ─────────────────────────────────────────────────────────────────────────────────────
- *  Coordenadas en metros: x de 0 a 105 (H ataca hacia la derecha), y de 0 a 68 (0 = banda de arriba).
- *  Varios instantes en un bloque, separados por una línea «---». Por instante:
- *  label: H                    la etiqueta (H/A/D/X) y, opcional, un texto: «label: H Barça keep it»
- *  mark: 1                     número ①… que lo enlaza con un timeline (marks:)
- *  caption: 0:03 · …           pie del instante
- *  home: 50,34 62,22           jugadores locales        away: 58,34 70,28   visitantes
- *  ball: 51,35                 balón                    lost: 60,40         último sitio visto (balón perdido)
- *  holder: 50,34               anillo de control alrededor de un jugador
- *  pass: 50,34 > 62,22         flecha de pase (también varias separadas por «;»)
- *  run: 40,20 > 48,18          carrera, punteada        zone: 50,34 1.5     círculo de radio en metros
- *  nearest                     dibuja la línea del balón al jugador más cercano (lo que ve el baseline)
- *  note: 62,18 texto           nota en esa posición
- *  view: full | left | right   todo el campo, una mitad o un zoom «x,y,ancho,alto» en metros
- *  Para toda la figura: title: …   cols: 2   footer: pie de la figura
+ *  Coordinates in metres: x from 0 to 105 (H attacks to the right), y from 0 to 68 (0 = top touchline).
+ *  Several moments in one block, separated by a "---" line. Per moment:
+ *  label: H                    the label (H/A/D/X) and, optionally, a text: "label: H Barça keep it"
+ *  mark: 1                     number ①… that links it to a timeline (marks:)
+ *  caption: 0:03 · …           the moment's caption
+ *  home: 50,34 62,22           home players             away: 58,34 70,28   away players
+ *  ball: 51,35                 ball                     lost: 60,40         last place seen (ball lost)
+ *  holder: 50,34               control ring around a player
+ *  pass: 50,34 > 62,22         pass arrow (also several separated by ";")
+ *  run: 40,20 > 48,18          run, dotted              zone: 50,34 1.5     circle with radius in metres
+ *  nearest                     draws the line from the ball to the nearest player (what the baseline sees)
+ *  note: 62,18 text            note at that position
+ *  view: full | left | right   the whole pitch, a half, or a zoom "x,y,width,height" in metres
+ *  For the whole figure: title: …   cols: 2   footer: figure footer
  */
 type Pt = [number, number]
 const pt = (s: string): Pt => {
   const m = s.trim().match(/^(-?[\d.]+)\s*,\s*(-?[\d.]+)$/)
-  return m ? [Number(m[1]), Number(m[2])] : fail(`pitch: «${s}» no es una posición x,y`)
+  return m ? [Number(m[1]), Number(m[2])] : fail(`pitch: "${s}" is not an x,y position`)
 }
 const pts = (s: string) => s.split(/\s+/).filter(Boolean).map(pt)
 
@@ -339,9 +339,9 @@ function pitchFrame(lines: string[], k: number) {
       nearest = true
       continue
     }
-    const m = line.match(/^([a-z]+):\s*(.*)$/) ?? fail(`pitch: no entiendo «${line}»`)
+    const m = line.match(/^([a-z]+):\s*(.*)$/) ?? fail(`pitch: can't understand "${line}"`)
     if (m[1] === "note") {
-      const n = m[2].match(/^(-?[\d.]+\s*,\s*-?[\d.]+)\s+(.+)$/) ?? fail(`pitch: «note: x,y texto»`)
+      const n = m[2].match(/^(-?[\d.]+\s*,\s*-?[\d.]+)\s+(.+)$/) ?? fail(`pitch: "note: x,y text"`)
       notes.push([pt(n[1]), n[2]])
     } else f[m[1]] = m[2]
   }
@@ -366,7 +366,7 @@ function pitchFrame(lines: string[], k: number) {
       .filter((s) => s.trim())
       .map((s) => {
         const [a, b] = s.split(">").map(pt)
-        // la flecha termina un poco antes del destino para no tapar al jugador
+        // the arrow ends a little before the target so it doesn't cover the player
         const d = Math.hypot(b[0] - a[0], b[1] - a[1])
         const e: Pt = [b[0] - ((b[0] - a[0]) / d) * 2, b[1] - ((b[1] - a[1]) / d) * 2]
         return `<line x1="${a[0]}" y1="${a[1]}" x2="${e[0]}" y2="${e[1]}" class="${cls}" marker-end="url(#viz-arrow)"/>`
@@ -416,7 +416,7 @@ ${ball ? `<circle cx="${ball[0]}" cy="${ball[1]}" r="1.15" class="viz-ball"/>` :
   }</div>`
 }
 
-// opciones de toda la figura (en cualquier instante): title, cols y footer (pie de la figura)
+// options for the whole figure (in any moment): title, cols and footer (the figure's footer)
 const PITCH_OPTS = /^(title|cols|footer):\s*(.*)$/
 
 function pitch(src: string) {
@@ -443,8 +443,8 @@ function pitch(src: string) {
 
 /* ─── bars ──────────────────────────────────────────────────────────────────────────────────────
  *  title: …    max: 1    caption: …
- *  1 frame late | 1.0000            etiqueta | valor (se enseña tal cual)
- *  8 frames late | 0.8933 | bad     tono opcional: good | bad | muted | accent (por defecto azul)
+ *  1 frame late | 1.0000            label | value (shown as is)
+ *  8 frames late | 0.8933 | bad     optional tone: good | bad | muted | accent (blue by default)
  */
 function bars(src: string) {
   const { opts, body } = split(src)
@@ -475,7 +475,7 @@ function stats(src: string) {
 }
 
 /* ─── roadmap ───────────────────────────────────────────────────────────────────────────────────
- *  P1 | Unseen is not dead | Explicación en una línea
+ *  P1 | Unseen is not dead | One-line explanation
  */
 function roadmap(src: string) {
   const { opts, body } = split(src)
@@ -489,7 +489,7 @@ function roadmap(src: string) {
 
 const renderers: Record<string, (src: string) => string> = { timeline, pitch, bars, stats, roadmap }
 
-/** HTML de un bloque de figura, o null si el lenguaje no es de figura (se pinta como código). */
+/** HTML for a figure block, or null if the language isn't a figure (it is rendered as code). */
 export function renderViz(lang: string | undefined, src: string): string | null {
   const r = lang && renderers[lang.trim()]
   return r ? r(src) : null

@@ -33,7 +33,7 @@ export function OutcomeChip({ outcome }: { outcome: Outcome }) {
   )
 }
 
-/** El modelo y la versión de una métrica, con el mismo color que su línea en la gráfica de resultados. */
+/** A metric's model and version, in the same colour as its line on the results chart. */
 export function ModelTag({ model, version, color }: { model: string; version?: string; color?: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 font-mono normal-case tracking-normal">
@@ -44,7 +44,7 @@ export function ModelTag({ model, version, color }: { model: string; version?: s
   )
 }
 
-/** «0.2433 → 0.3120 ▲ +0.0687», en verde si mejora y en naranja si empeora. */
+/** "0.2433 → 0.3120 ▲ +0.0687", green if it improves and orange if it gets worse. */
 export function MetricPill({ m, big = false, color }: { m: Metric; big?: boolean; color?: string }) {
   const delta = m.before === undefined ? undefined : m.value - m.before
   const better = delta === undefined ? undefined : m.better === "higher" ? delta > 0 : delta < 0

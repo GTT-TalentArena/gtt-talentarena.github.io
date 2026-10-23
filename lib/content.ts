@@ -1,6 +1,6 @@
 /**
- * Todo el texto de la landing. Los campos vacíos ("") se muestran como «Pending: …»
- * hasta el lanzamiento (ver lib/launch.ts).
+ * All the landing page text. Empty fields ("") are shown as "Pending: …"
+ * until launch (see lib/launch.ts).
  */
 
 export const site = {
@@ -34,7 +34,7 @@ export const now = {
   title: "Ball possession",
   detail: "Initial Challenge · online",
   target: { label: "spellF1 to beat", value: "0.2433" },
-  // Fin del plazo de la fase 1. La hora exacta no está publicada: se usa el final del día en Barcelona.
+  // End of the phase 1 deadline. The exact time isn't published: the end of the day in Barcelona is used.
   deadline: "2026-11-17T23:59:59+01:00",
   window: "20 Oct — 17 Nov",
 }
@@ -73,18 +73,18 @@ export type Position = "Goalkeeper" | "Defender" | "Forward"
 export type Player = {
   number: string
   name: string
-  /** El de la tabla del README de la organización (GTT-TalentArena/.github); vacío = «Role pending». */
+  /** The one in the organisation README table (GTT-TalentArena/.github); empty = "Role pending". */
   role: string
-  /** Formación 1-2-2 en medio campo (propuesta de Alejandro). */
+  /** 1-2-2 formation on half a pitch (Alejandro's proposal). */
   position: Position
-  /** Sitio en el medio campo, en metros: x desde la banda izquierda (0–68), y desde el medio campo (0–52.5). */
+  /** Spot on the half pitch, in metres: x from the left touchline (0–68), y from the halfway line (0–52.5). */
   spot: [number, number]
   github?: string
   portfolio?: string
   linkedin?: string
 }
 
-// 1-2-2: Alejandro en la portería; Nico y Jimy atrás; Edu y Pablo arriba.
+// 1-2-2: Alejandro in goal; Nico and Jimy at the back; Edu and Pablo up front.
 export const squad: Player[] = [
   {
     number: "01",

@@ -1,3 +1,90 @@
+# gtt — GTT · TalentArena website
+
+> 🇪🇸 This README was originally written in Spanish. The Spanish original is kept at the bottom.
+
+The team website for More than a Hack 2027: **https://gtt-talentarena.github.io**
+
+Next.js 16 + Tailwind CSS 4, exported as a static site and published with **GitHub Pages**: every push to `main`
+builds and publishes (`.github/workflows/deploy.yml`). It is also the source of every image on the organisation's
+GitHub profile.
+
+## Views
+
+| Route | What it is |
+| :-- | :-- |
+| `/` | Home page ("Team"): challenge, squad in a 1-2-2, approach and fixtures, with its own section index |
+| `/log` | The possession model log: studies, improvements and tests on the challenge fork, in order |
+| `/previews/*` | Canvases for the organisation README images (not indexed) |
+
+## Adding a log entry
+
+The log records the work on the **possession model** in the project's main repo
+([`GTT-TalentArena/more-than-a-hack-2027`](https://github.com/GTT-TalentArena/more-than-a-hack-2027)), **not** the
+changes to this website, which go in this repository's commits. No CMS: one Markdown file per entry in
+[`content/log/`](content/log). Copy [`_template.md`](content/log/_template.md) and follow the instructions at the top
+of [`lib/log.ts`](lib/log.ts) (also in [`AGENTS.md`](AGENTS.md), so the team's LLMs read them). Push to `main` and it
+is published.
+
+## Editing content
+
+All the text is in [`lib/content.ts`](lib/content.ts). Squad roles are empty ("Pending") until they are defined.
+
+## Navigation
+
+The top bar only switches view (**Team** and **Log**). The home page sections have their own fixed index under the
+header ([`components/section-index.tsx`](components/section-index.tsx)): each place does one thing.
+
+## Identity
+
+The **Home** kit (paper, midnight-blue ink and blaugrana) and a single type system across all views: Bricolage
+Grotesque, Instrument Serif italic, Geist and Geist Mono ([`lib/fonts.ts`](lib/fonts.ts)).
+
+## The squad
+
+Half a pitch with the **1-2-2** formation ([`components/lineup.tsx`](components/lineup.tsx)): each player has their
+`position` and `spot` (in metres) in [`lib/content.ts`](lib/content.ts). Hovering, focusing or tapping a player opens
+their card with the links.
+
+## The pitch and the ball
+
+- [`lib/pitch-sim.ts`](lib/pitch-sim.ts) simulates 22 players and the ball with the challenge labels (H/A/D). It is
+  **invented**: it neither uses nor reconstructs match data, which the rules forbid publishing.
+- [`lib/ball.ts`](lib/ball.ts) is the exact geometry of a football (truncated icosahedron) and
+  [`components/data-ball.tsx`](components/data-ball.tsx) draws it as a data mesh: you can kick it by dragging it or
+  with a click.
+
+## Organisation README images
+
+```bash
+npm run build
+npm run serve                                   # serves ./out on http://localhost:4173
+npm run previews -- http://localhost:4173       # in another terminal
+```
+
+It generates, in `../.github/profile/assets` and `../.github/brand`:
+
+- `pitch.svg`, `banner.svg` and `site.svg`: **animated SVGs** (embedded fonts + SMIL) that GitHub plays in the
+  README. The ball rolls and the ring spins; with "Reduce motion" they stay still. It fetches the fonts from Google
+  Fonts, so it needs network access.
+- PNG screenshots with headless Edge/Chrome: squad, avatar, social previews and `app/opengraph-image.png`.
+
+## Development
+
+```bash
+npm install
+npm run dev
+npm run typecheck
+```
+
+## Contributing
+
+Everything is written in English. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+---
+
+<details>
+<summary>🇪🇸 Original (Spanish)</summary>
+
 # gtt — web de GTT · TalentArena
 
 Web del equipo para More than a Hack 2027: **https://gtt-talentarena.github.io**
@@ -73,3 +160,5 @@ npm install
 npm run dev
 npm run typecheck
 ```
+
+</details>
