@@ -1,7 +1,7 @@
 import { hero, now, site } from "@/lib/content"
 import { BallBadge } from "@/components/ball-badge"
 
-/** Cabecera del README de la organización: 1280×400. */
+/** The organisation README header: 1280×400. */
 export default function Banner() {
   return (
     <div className="flex h-[400px] w-[1280px] flex-col bg-paper px-12 pb-7 pt-8 text-ink">

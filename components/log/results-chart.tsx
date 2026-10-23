@@ -8,10 +8,10 @@ type Milestone = { date: string; title: string }
 
 const DAY = 86_400_000
 const t = (iso: string) => Date.parse(`${iso}T12:00:00Z`)
-// fondo de la tarjeta (paper-2 al 60 % sobre paper): el anillo de los puntos usa este color
+// card background (paper-2 at 60% over paper): the points' ring uses this colour
 const SURFACE = "#ece6dc"
 
-/** Pasos «redondos» para el eje Y: el más fino que deja como mucho 6 tramos. */
+/** "Round" steps for the Y axis: the finest that leaves at most 6 intervals. */
 function niceTicks(lo: number, hi: number) {
   const mag = 10 ** Math.floor(Math.log10((hi - lo) / 6))
   const steps = [1, 2, 2.5, 5, 10, 20].map((k) => k * mag)
@@ -27,13 +27,13 @@ function niceTicks(lo: number, hi: number) {
 const fmt = (v: number) => (Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(2) : v.toFixed(4))
 
 /**
- * Gráfica de resultados del log: una línea por modelo que une sus versiones en el tiempo, para la
- * métrica y el split elegidos. Cada punto enlaza a la entrada que lo midió. De fondo, los hitos del
- * reto y «hoy»; las líneas discontinuas son las referencias publicadas (lib/log-meta.ts).
+ * The log's results chart: one line per model joining its versions over time, for the chosen
+ * metric and split. Each point links to the entry that measured it. In the background, the
+ * challenge milestones and "today"; the dashed lines are the published references (lib/log-meta.ts).
  *
- * Colores de los modelos validados con el validador de paletas (6 huecos sobre el papel, pares
- * adyacentes y los 3 primeros en todos los pares). El rosa queda por debajo de 3:1: por eso hay
- * etiquetas directas y vista de tabla.
+ * Model colours validated with the palette validator (6 slots on the paper, adjacent pairs and
+ * the first 3 in all pairs). The pink falls below 3:1: that's why there are direct labels and a
+ * table view.
  */
 export function ResultsChart({
   points,
@@ -80,7 +80,7 @@ export function ResultsChart({
     ? slice.reduce((a, b) => ((better === "higher" ? b.value > a.value : b.value < a.value) ? b : a))
     : undefined
 
-  // tamaño real del contenedor: el SVG se dibuja a escala 1:1 para que el texto no se deforme
+  // real container size: the SVG is drawn at 1:1 so the text isn't distorted
   const box = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState<number | null>(null)
   const [today, setToday] = useState<string | null>(null)
@@ -101,13 +101,13 @@ export function ResultsChart({
   const plotW = W - m.left - m.right
   const plotH = height - m.top - m.bottom
 
-  // eje X: la fase entera (del arranque a la entrega), alargado si hay puntos u «hoy» después
+  // X axis: the whole phase (from kick-off to submission), extended if there are points or "today" after it
   const last = [to, ...slice.map((p) => p.date), today ?? to].sort().at(-1)!
   const x0 = t(from)
   const x1 = Math.max(t(last), x0 + 7 * DAY)
   const x = (iso: string) => m.left + ((t(iso) - x0) / (x1 - x0)) * plotW
 
-  // eje Y: valores, intervalos y referencias, con margen; dentro de [0, 1] si la métrica lo está
+  // Y axis: values, intervals and references, with margin; within [0, 1] if the metric is
   const ys = [...slice.flatMap((p) => [p.value, p.low ?? p.value, p.high ?? p.value]), ...refs.map((r) => r.value)]
   const unit = ys.every((v) => v >= 0 && v <= 1)
   let lo = ys.length ? Math.min(...ys) : 0
@@ -122,7 +122,7 @@ export function ResultsChart({
   const mondays: string[] = []
   for (let d = x0; d <= x1; d += DAY) if (new Date(d).getUTCDay() === 1) mondays.push(new Date(d).toISOString().slice(0, 10))
 
-  // etiqueta directa al final de cada línea; si dos chocan, se queda la de arriba y la otra va a la leyenda
+  // direct label at the end of each line; if two collide, the top one stays and the other goes to the legend
   const ends = series
     .map((s) => ({ s, p: s.list.at(-1)! }))
     .map((e) => ({ ...e, yy: y(e.p.value), xx: x(e.p.date) }))
@@ -159,7 +159,7 @@ export function ResultsChart({
         </div>
       </div>
 
-      {/* filtros: una fila, encima de todo lo que afectan */}
+      {/* filters: one row, above everything they affect */}
       <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
         <Choice label="Metric" options={metrics} value={metric} onChange={chooseMetric} />
         <Choice label="Split" options={splits} value={split} onChange={setSplit} format={splitLabel} />
@@ -187,7 +187,7 @@ export function ResultsChart({
             ))}
             <line x1={m.left} x2={W - m.right} y1={m.top + plotH} y2={m.top + plotH} className="stroke-ink" strokeOpacity={0.45} />
 
-            {/* hitos del reto, de fondo */}
+            {/* challenge milestones, in the background */}
             {milestones
               .filter((k) => t(k.date) >= x0 && t(k.date) <= x1)
               .map((k) => {
@@ -236,7 +236,7 @@ export function ResultsChart({
                 </g>
               ))}
 
-            {/* una línea por modelo */}
+            {/* one line per model */}
             {series.map((s) => (
               <polyline
                 key={s.model}
@@ -249,10 +249,10 @@ export function ResultsChart({
               />
             ))}
 
-            {/* el mejor resultado, con un anillo */}
+            {/* the best result, with a ring */}
             {best && <circle cx={x(best.date)} cy={y(best.value)} r={9.5} fill="none" className="stroke-ink" strokeWidth={1.5} />}
 
-            {/* puntos: cada uno es un enlace a su entrada */}
+            {/* points: each one is a link to its entry */}
             {slice.map((p) => (
               <a
                 key={`${p.slug}-${p.model}-${p.version}`}
@@ -406,7 +406,7 @@ function Tooltip({ p, color, left, top, width }: { p: ResultPoint; color: string
   )
 }
 
-/** La misma información sin gráfica (accesible y sin depender del ratón). */
+/** The same information without the chart (accessible and not mouse-dependent). */
 function Table({ slice, metric, colors }: { slice: ResultPoint[]; metric: string; colors: Record<string, string> }) {
   if (!slice.length) return null
   return (

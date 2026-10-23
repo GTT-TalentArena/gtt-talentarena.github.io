@@ -14,7 +14,7 @@ export function ArrowDown({ className = "size-3" }: { className?: string }) {
   )
 }
 
-/** Círculo central con la línea de medio campo: separador de la banda. */
+/** Centre circle with the halfway line: the band's separator. */
 export function CenterSpot({ className = "size-4" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
@@ -25,7 +25,7 @@ export function CenterSpot({ className = "size-4" }: { className?: string }) {
   )
 }
 
-/** Punto blaugrana: la marca mínima de GTT (balón partido en blau y grana). */
+/** Blaugrana dot: GTT's minimal mark (a ball split into blau and grana). */
 export function Dot({ className = "size-2" }: { className?: string }) {
   return <span aria-hidden className={`blaugrana inline-block shrink-0 rounded-full ${className}`} />
 }

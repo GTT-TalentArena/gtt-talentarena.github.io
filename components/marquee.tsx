@@ -14,7 +14,7 @@ export function Marquee({ items, className = "" }: { items: string[]; className?
       ))}
     </ul>
   )
-  // Con «Reducir movimiento» no se mueve solo: se desliza a mano y sin la copia del bucle.
+  // With "Reduce motion" it doesn't move on its own: it scrolls by hand and without the loop copy.
   return (
     <div
       className={`on-accent overflow-hidden py-5 motion-reduce:overflow-x-auto motion-reduce:[scrollbar-width:none] motion-reduce:[&::-webkit-scrollbar]:hidden sm:py-7 ${className}`}

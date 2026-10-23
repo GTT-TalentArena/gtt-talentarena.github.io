@@ -36,7 +36,7 @@ export function Squad() {
   )
 }
 
-/** La formación en texto: quién juega en cada línea. */
+/** The formation as text: who plays in each line. */
 export function Formation({ className = "" }: { className?: string }) {
   return (
     <dl className={`border-t border-line ${className}`}>

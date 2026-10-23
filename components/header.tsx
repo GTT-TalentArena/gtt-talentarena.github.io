@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { site } from "@/lib/content"
 import { Arrow, Dot } from "@/components/icons"
 
-// La barra solo cambia de vista. Las secciones de la portada tienen su propio índice (section-index.tsx).
+// The bar only switches view. The home page sections have their own index (section-index.tsx).
 const links = [
   { href: "/", label: "Team" },
   { href: "/log", label: "Log" },

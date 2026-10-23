@@ -1,5 +1,5 @@
-# Valida cada PR contra main: instala dependencias y compila.
-# Si el build falla (por ejemplo, una entrada del log mal formada), el PR no se puede mergear.
+# Validates every PR against main: installs dependencies and builds.
+# If the build fails (for example, a malformed log entry), the PR can't be merged.
 name: Validate PR
 
 on:

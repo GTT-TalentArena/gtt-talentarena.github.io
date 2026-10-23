@@ -4,9 +4,9 @@ import { BallSlot } from "./ball-slot"
 const SCALE = 1180 / 1440
 
 /**
- * La web dentro de una ventana de navegador, para el README: 1280×800.
- * La portada se carga sin balón (?noball): scripts/readme-svg.ts lo dibuja encima, animado,
- * en la posición que BallSlot deja apuntada en <body data-ball="x,y,ancho,alto">.
+ * The site inside a browser window, for the README: 1280×800.
+ * The home page loads without the ball (?noball): scripts/readme-svg.ts draws it on top, animated,
+ * at the position BallSlot records in <body data-ball="x,y,width,height">.
  */
 export default function SitePreview() {
   return (

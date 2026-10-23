@@ -1,8 +1,8 @@
 /**
- * spellF1 y macroF1 del reto, portados de evaluation/possession_metrics.py (fork) para los ejemplos
- * de juguete del log. Trabajan sobre etiquetas H/A/D/X, una por celda. Mismas reglas que el scorer:
- * las X de la predicción se rellenan con la etiqueta anterior (o la siguiente al principio), una
- * posesión es una racha máxima de H o de A, y se emparejan una a una por IoU con el mismo equipo.
+ * The challenge's spellF1 and macroF1, ported from evaluation/possession_metrics.py (fork) for the
+ * log's toy examples. They work on H/A/D/X labels, one per cell. Same rules as the scorer:
+ * the prediction's X are filled with the previous label (or the next one at the start), a
+ * possession is a maximal run of H or of A, and they are matched one to one by IoU with the same team.
  */
 
 export type Label = "H" | "A" | "D" | "X"
@@ -10,7 +10,7 @@ export type Spell = { start: number; stop: number; label: Label }
 
 export const IOUS = [0.3, 0.4, 0.5, 0.6, 0.7]
 
-/** Tramos donde la verdad no es X (en los ejemplos suele ser todo). */
+/** Stretches where the truth isn't X (in the examples it's usually everything). */
 function validRuns(gt: Label[]) {
   const runs: [number, number][] = []
   let start = -1
@@ -25,7 +25,7 @@ function validRuns(gt: Label[]) {
   return runs
 }
 
-/** Lo que lee el scorer: cada X pasa a ser la etiqueta anterior de su tramo (la siguiente si no hay). */
+/** What the scorer reads: each X becomes the previous label in its stretch (the next one if there is none). */
 export function fillAbstentions(pred: Label[], gt?: Label[]) {
   const out = [...pred]
   for (const [a, b] of validRuns(gt ?? pred.map(() => "H"))) {
@@ -51,7 +51,7 @@ export function spells(codes: Label[], runs = validRuns(codes)): Spell[] {
   return out
 }
 
-/** spellF1 medio sobre IoU 0.3–0.7 y, para dibujar, qué posesiones predichas casan a IoU 0.5. */
+/** Mean spellF1 over IoU 0.3–0.7 and, for drawing, which predicted possessions match at IoU 0.5. */
 export function spellF1(gt: Label[], pred: Label[]) {
   const runs = validRuns(gt)
   const G = spells(gt, runs)
@@ -92,7 +92,7 @@ export function spellF1(gt: Label[], pred: Label[]) {
   }
 }
 
-/** Media sin ponderar del F1 de H, A y D sobre las celdas puntuadas; una X cuenta como fallo. */
+/** Unweighted mean of the F1 of H, A and D over the scored cells; an X counts as a miss. */
 export function macroF1(gt: Label[], pred: Label[]) {
   const f1 = (k: Label) => {
     let tp = 0

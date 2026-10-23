@@ -17,7 +17,7 @@ export function SectionHead({
     <div>
       <div className="label flex items-center justify-between border-t border-ink pt-3">
         <span className="flex items-center gap-2">
-          {/* pestaña blaugrana sobre la línea, como el cuello de una camiseta */}
+          {/* blaugrana tab over the line, like a shirt collar */}
           <span aria-hidden className="blaugrana -mt-[13px] mr-1 h-[3px] w-8 self-start" />
           <span className="text-accent">{index}</span> — {label}
         </span>

@@ -9,7 +9,7 @@ import { Authors, MetricPill, ModelTag, OutcomeChip, TypeChip } from "@/componen
 
 type Params = Promise<{ slug: string }>
 
-// Web estática (GitHub Pages): solo existen las entradas que hay al compilar
+// Static site (GitHub Pages): only the entries present at build time exist
 export const dynamicParams = false
 
 export function generateStaticParams() {
@@ -29,7 +29,7 @@ export default async function EntryPage({ params }: { params: Params }) {
   const e = entries[i]
   const newer = entries[i - 1]
   const older = entries[i + 1]
-  // modelos medidos en esta entrada, con el color de su línea en la gráfica de /log
+  // models measured in this entry, in the colour of their line on the /log chart
   const colors = modelColors(entries)
   const models = [...new Map(e.metrics.filter((m) => m.model).map((m) => [`${m.model} ${m.version}`, m])).values()]
   const long = new Date(`${e.date}T12:00:00Z`).toLocaleDateString("en-GB", {

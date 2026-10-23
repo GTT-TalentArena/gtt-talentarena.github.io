@@ -16,7 +16,7 @@ export function generateStaticParams() {
   return (Object.keys(variants) as V[]).map((v) => ({ v }))
 }
 
-/** Social preview de repositorio / Open Graph: 1280×640. */
+/** Repository social preview / Open Graph: 1280×640. */
 export default async function Social({ params }: { params: Promise<{ v: V }> }) {
   const { v } = await params
   if (v === "challenge") return <Challenge />

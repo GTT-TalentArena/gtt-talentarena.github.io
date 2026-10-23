@@ -1,6 +1,6 @@
 /**
- * Sirve ./out (la web ya compilada) en local, como lo hará GitHub Pages.
- * Uso: npm run build && npm run serve   →   http://localhost:4173
+ * Serves ./out (the built site) locally, as GitHub Pages will.
+ * Usage: npm run build && npm run serve   →   http://localhost:4173
  */
 import { createReadStream, existsSync, statSync } from "node:fs"
 import { createServer } from "node:http"

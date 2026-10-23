@@ -18,8 +18,8 @@ const tone: Record<Outcome | "none", string> = {
 }
 
 /**
- * Cronología: la fase en curso como una pista de días, con los hitos del reto y un punto por
- * entrada del log (color = resultado). «Hoy» se calcula en el navegador.
+ * Chronology: the current phase as a track of days, with the challenge milestones and a dot per
+ * log entry (colour = outcome). "Today" is computed in the browser.
  */
 export function Chronology({ dots, milestones, from, to }: { dots: Dot[]; milestones: Milestone[]; from: string; to: string }) {
   const [today, setToday] = useState<string | null>(null)
@@ -33,7 +33,7 @@ export function Chronology({ dots, milestones, from, to }: { dots: Dot[]; milest
   const x = (iso: string) => `${pct(iso)}%`
   const days = Array.from({ length: span + 1 }, (_, i) => new Date(t(from) + i * DAY).toISOString().slice(0, 10))
 
-  // apilar las entradas del mismo día
+  // stack entries from the same day
   const stack = new Map<string, number>()
   const placed = [...dots]
     .sort((a, b) => a.date.localeCompare(b.date))
@@ -99,7 +99,7 @@ export function Chronology({ dots, milestones, from, to }: { dots: Dot[]; milest
           </a>
         ))}
 
-        {/* pista de días */}
+        {/* track of days */}
         <div className="absolute inset-x-0 bottom-3 h-px bg-ink/50" />
         {days.map((iso) => {
           const monday = new Date(`${iso}T12:00:00Z`).getUTCDay() === 1
@@ -122,7 +122,7 @@ export function Chronology({ dots, milestones, from, to }: { dots: Dot[]; milest
   )
 }
 
-/** Filtro por tipo: oculta filas y semanas vacías sin volver a pintar la lista. */
+/** Filter by type: hides rows and empty weeks without repainting the list. */
 export function TypeFilter({ counts }: { counts: Partial<Record<LogType, number>> }) {
   const [active, setActive] = useState<LogType | "all">("all")
 

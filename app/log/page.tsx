@@ -35,14 +35,14 @@ export default function LogPage() {
   const tested = entries.filter((e) => e.type === "experiment" || e.type === "iteration")
   const ok = tested.filter((e) => e.outcome === "success").length
   const ko = tested.filter((e) => e.outcome === "failure").length
-  // resultados de los modelos: la gráfica y el «mejor» solo comparan dentro de un mismo split
+  // model results: the chart and the "best" only compare within the same split
   const points = resultPoints(entries)
   const colors = modelColors(entries)
   const bestSplit = defaultSplit(points, "spellF1")
   const spell = points.filter((p) => p.metric === "spellF1" && p.split === bestSplit).map((p) => p.value)
   const best = spell.length ? Math.max(...spell) : undefined
 
-  // semanas de partido desde el arranque
+  // match weeks since kick-off
   const weeks = new Map<string, LogEntry[]>()
   for (const e of entries) {
     const w = weekStart(e.date)
@@ -116,7 +116,7 @@ export default function LogPage() {
           </div>
         </section>
 
-        {/* primer plano: los resultados de los modelos */}
+        {/* foreground: the model results */}
         <section id="results" aria-label="Model results" className="px-4 pb-12 sm:px-6 lg:px-10">
           <Reveal className="mx-auto max-w-[1440px]">
             <ResultsChart
@@ -132,7 +132,7 @@ export default function LogPage() {
 
         <section className="px-4 pb-24 sm:px-6 sm:pb-32 lg:px-10">
           <div className="mx-auto max-w-[1440px]">
-            {/* segundo plano: la cronología de entradas, encima de la lista a la que enlaza */}
+            {/* background: the chronology of entries, above the list it links to */}
             <Chronology
               from={KICKOFF}
               to={to}

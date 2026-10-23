@@ -1,8 +1,8 @@
 /**
- * Fuentes de Google cargadas con next/font (se sirven desde la propia web).
- *   Bricolage Grotesque → titulares · Instrument Serif cursiva → la palabra que cambia el tono
- *   Geist → texto · Geist Mono → etiquetas y datos
- * Las mismas, embebidas, en las imágenes del README (scripts/readme-svg.ts).
+ * Google fonts loaded with next/font (served from the site itself).
+ *   Bricolage Grotesque → headlines · Instrument Serif italic → the word that shifts the tone
+ *   Geist → body text · Geist Mono → labels and data
+ * The same ones, embedded, in the README images (scripts/readme-svg.ts).
  */
 import { Bricolage_Grotesque, Geist, Geist_Mono, Instrument_Serif } from "next/font/google"
 
@@ -11,5 +11,5 @@ const instrument = Instrument_Serif({ subsets: ["latin", "latin-ext"], weight: "
 const geist = Geist({ subsets: ["latin", "latin-ext"], variable: "--f-geist" })
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--f-geist-mono" })
 
-/** Clases que definen las variables `--f-*`; van en <html>. */
+/** Classes that define the `--f-*` variables; they go on <html>. */
 export const fontVariables = [bricolage, instrument, geist, geistMono].map((f) => f.variable).join(" ")

@@ -30,7 +30,7 @@ function drawPitch(ctx: CanvasRenderingContext2D, k: number, c: Colors) {
   ctx.save()
   ctx.translate(MARGIN * k, MARGIN * k)
 
-  // franjas de corte de césped, verticales como una camiseta a rayas
+  // mowing stripes on the grass, vertical like a striped shirt
   const bands = 14
   for (let i = 0; i < bands; i++) {
     if (i % 2) continue
@@ -177,7 +177,7 @@ export function Pitch() {
       ctx.translate(MARGIN * k, MARGIN * k)
       const P = (v: number) => v * k
 
-      // estelas: lo que ve un sistema de tracking
+      // trails: what a tracking system sees
       sim.agents.forEach((a, i) => {
         const t = trails[i]
         ctx.strokeStyle = a.team === "H" ? colors.home : colors.away
@@ -193,7 +193,7 @@ export function Pitch() {
       })
       ctx.globalAlpha = 1
 
-      // jugador más cercano al balón: la idea del baseline
+      // player nearest the ball: the baseline's idea
       const n = sim.agents[sim.nearest()]
       ctx.setLineDash([P(0.7), P(0.7)])
       ctx.strokeStyle = colors.ink
@@ -219,7 +219,7 @@ export function Pitch() {
         }
       })
 
-      // balón
+      // ball
       if (sim.ball.seen) {
         for (let j = 1; j < ballTrail.length; j++) {
           ctx.globalAlpha = (j / ballTrail.length) * 0.5
@@ -251,7 +251,7 @@ export function Pitch() {
       }
       ctx.restore()
 
-      // tira de posesiones (últimos 40 s)
+      // possession strip (last 40 s)
       const sw = sc.width
       const sh = sc.height
       sctx.clearRect(0, 0, sw, sh)
@@ -284,7 +284,7 @@ export function Pitch() {
       if (lostEl.current) lostEl.current.style.opacity = sim.ball.seen ? "0" : "1"
     }
 
-    // calienta la simulación para que la tira no empiece vacía
+    // warm up the simulation so the strip doesn't start empty
     for (let i = 0; i < STRIP_FRAMES; i++) advance()
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)")

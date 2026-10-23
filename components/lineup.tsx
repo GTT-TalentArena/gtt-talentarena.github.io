@@ -6,7 +6,7 @@ import { clamp } from "@/lib/pitch-sim"
 import { FPS, SquadSim } from "@/lib/squad-sim"
 import { Arrow } from "@/components/icons"
 
-// Medio campo en metros (68 × 52,5) con margen para la portería, que sobresale por abajo
+// Half pitch in metres (68 × 52.5) with margin for the goal, which sticks out at the bottom
 const VIEW = { x: -3, y: -3, w: 74, h: 58.5 }
 const at = ([x, y]: [number, number]) =>
   ({
@@ -16,8 +16,8 @@ const at = ([x, y]: [number, number]) =>
 
 const short: Record<Player["position"], string> = { Goalkeeper: "GK", Defender: "DEF", Forward: "FWD" }
 
-// La ficha flota junto al jugador desde sm; en móvil se acopla abajo. Solo se pinta una de las dos,
-// para no cargar dos veces la web del jugador.
+// The card floats next to the player from sm up; on mobile it docks at the bottom. Only one of the
+// two is rendered, so the player's website isn't loaded twice.
 const WIDE = "(min-width: 640px)"
 function useWide() {
   return useSyncExternalStore(
@@ -32,9 +32,9 @@ function useWide() {
 }
 
 /**
- * La plantilla en formación 1-2-2 sobre medio campo, jugando sola un partidillo (lib/squad-sim.ts).
- * Al pasar el ratón, enfocar con el teclado o tocar un jugador se abre su ficha, con su web dentro;
- * ese jugador se queda quieto y los demás siguen. `still`: quietos y sin interacción (imágenes del README).
+ * The squad in a 1-2-2 formation on half a pitch, playing a kickabout on its own (lib/squad-sim.ts).
+ * Hovering, keyboard focus or tapping a player opens their card, with their website inside;
+ * that player stands still and the others carry on. `still`: still and non-interactive (README images).
  */
 export function Lineup({ still = false }: { still?: boolean }) {
   const [active, setActive] = useState<string | null>(null)
@@ -49,8 +49,8 @@ export function Lineup({ still = false }: { still?: boolean }) {
   const [place, setPlace] = useState<CSSProperties>({ visibility: "hidden" })
   const wide = useWide()
 
-  // La ficha, junto al jugador tal como está al abrirla (se queda quieto mientras está abierta):
-  // a su lado, hacia el centro del campo, y sin salirse del campo. Si de lado no cabe, encima o debajo.
+  // The card, next to the player as they are when it opens (they stand still while it's open):
+  // beside them, towards the centre of the pitch, without leaving the pitch. If it doesn't fit beside, above or below.
   useLayoutEffect(() => {
     if (!active || !wide || !card.current) return
     const r = root.current!.getBoundingClientRect()
@@ -73,7 +73,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
     activeRef.current = active
     if (!active) return
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && ((pinned.current = false), setActive(null))
-    // en móvil no hay hover: la ficha se queda hasta que se cierra (✕ o tocando otra vez al jugador)
+    // no hover on mobile: the card stays until it's closed (✕ or tapping the player again)
     const onDown = (e: PointerEvent) => {
       if (wide && !root.current?.contains(e.target as Node)) {
         pinned.current = false
@@ -88,7 +88,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
     }
   }, [active, wide])
 
-  // el partidillo: mueve las fichas y el balón sin pasar por React
+  // the kickabout: moves the cards and the ball without going through React
   useEffect(() => {
     if (still || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
     const el = root.current!
@@ -98,7 +98,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
       squad.findIndex((p) => p.position === "Goalkeeper"),
     )
 
-    // el balón se controla en el borde de la ficha, que cambia de tamaño con la pantalla
+    // the ball is controlled at the card's edge, which changes size with the screen
     const measure = () => {
       const a = avatar.current
       if (a && el.clientWidth) sim.reach = (a.offsetWidth / 2 / el.clientWidth) * VIEW.w + 0.6
@@ -160,7 +160,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
     clearTimeout(closing.current)
     setActive(n)
   }
-  // pequeño margen para poder pasar el ratón del jugador a su ficha sin que se cierre
+  // small margin so the mouse can move from the player to their card without it closing
   const close = () => {
     if (pinned.current) return
     clearTimeout(closing.current)
@@ -180,7 +180,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
             }}
             className={`absolute -translate-x-1/2 -translate-y-[38%] ${isActive ? "z-20" : "z-10"}`}
             style={at(p.spot)}
-            // con el ratón moviéndose de verdad: un jugador que pasa por debajo del ratón quieto no abre su ficha
+            // only with the mouse really moving: a player passing under a still mouse doesn't open their card
             onMouseMove={still ? undefined : (e) => (e.movementX || e.movementY) && open(p.number)}
             onMouseLeave={still ? undefined : () => active === p.number && close()}
           >
@@ -197,7 +197,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
               }}
               className="group flex flex-col items-center outline-none disabled:cursor-default"
             >
-              {/* tazo: canto blaugrana por segmentos alrededor de la foto */}
+              {/* tazo: segmented blaugrana rim around the photo */}
               <span
                 ref={i === 0 ? avatar : undefined}
                 className={`relative block size-11 rounded-full bg-[repeating-conic-gradient(var(--color-blau)_0_22.5deg,var(--color-grana)_22.5deg_45deg)] p-[3px] ring-2 ring-paper transition-transform duration-500 sm:size-16 sm:p-1 sm:ring-[3px] lg:size-[5.5rem] lg:p-1.5 ${
@@ -229,7 +229,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
         />
       )}
 
-      {/* el balón: por encima de las fichas y por debajo de la ficha abierta */}
+      {/* the ball: above the player tokens and below the open card */}
       {!still && (
         <span
           ref={ballEl}
@@ -238,7 +238,7 @@ export function Lineup({ still = false }: { still?: boolean }) {
         />
       )}
 
-      {/* en móvil la ficha no flota junto al jugador (se saldría de la pantalla): se acopla abajo, a todo el ancho */}
+      {/* on mobile the card doesn't float next to the player (it would go off screen): it docks at the bottom, full width */}
       {active && !still && !wide && (
         <Info
           player={squad.find((p) => p.number === active)!}
@@ -278,10 +278,10 @@ function Avatar({ player: p }: { player: Player }) {
   )
 }
 
-// La web del jugador se pinta a 1280 px de ancho y se encoge hasta caber en la ficha
+// The player's website renders at 1280 px wide and is scaled down to fit in the card
 const FRAME = { w: 1280, h: 640 }
 
-/** Vista previa en vivo de la web del jugador, como las tarjetas de un panel: solo para mirar. */
+/** Live preview of the player's website, like dashboard cards: view only. */
 function SitePreview({ href, name, className = "aspect-[2/1]" }: { href: string; name: string; className?: string }) {
   const box = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0)
@@ -353,8 +353,8 @@ function Info({
     { label: "LinkedIn", href: p.linkedin },
   ].filter((l): l is { label: string; href: string } => Boolean(l.href))
 
-  // anclada: junto al jugador, donde diga `style`; solo desde sm
-  // acoplada: abajo del campo y a todo el ancho; solo en móvil, más baja para caber en el campo
+  // anchored: next to the player, wherever `style` says; only from sm up
+  // docked: below the pitch and full width; only on mobile, shorter to fit on the pitch
   const docked = placement === "docked"
   const position = docked ? "inset-x-2 bottom-2 z-30" : "z-30 w-72"
 
@@ -415,7 +415,7 @@ function Info({
   )
 }
 
-/** Medio campo visto desde arriba: el medio campo arriba, nuestra portería abajo. */
+/** Half pitch seen from above: the halfway line at the top, our goal at the bottom. */
 function HalfPitch() {
   const arc = Math.sqrt(9.15 ** 2 - 5.5 ** 2)
   return (
@@ -425,7 +425,7 @@ function HalfPitch() {
       aria-hidden
     >
       <rect x={VIEW.x} y={VIEW.y} width={VIEW.w} height={VIEW.h} rx="2" className="fill-paper-2" />
-      {/* franjas de césped */}
+      {/* grass stripes */}
       {Array.from({ length: 7 }, (_, i) =>
         i % 2 ? null : <rect key={i} x="0" y={i * 7.5} width="68" height="7.5" className="fill-ink" opacity="0.035" />,
       )}

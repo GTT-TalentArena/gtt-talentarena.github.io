@@ -1,8 +1,8 @@
 /**
- * Exporta la simulación del campo como SVG animado (SMIL) para los README de GitHub,
- * que no ejecutan JavaScript pero sí animan SVG. Usa la misma simulación que la web.
+ * Exports the pitch simulation as an animated SVG (SMIL) for the GitHub READMEs,
+ * which don't run JavaScript but do animate SVG. Uses the same simulation as the site.
  *
- * Uso: node scripts/pitch-svg.ts [salida.svg]
+ * Usage: node scripts/pitch-svg.ts [output.svg]
  */
 import { writeFileSync } from "node:fs"
 import { resolve } from "node:path"
@@ -23,7 +23,7 @@ const C = {
   ball: "#e8ff2e",
 }
 
-// 1) Simular y quedarnos con una ventana que tenga de todo: H, A, D y un cambio de posesión.
+// 1) Simulate and keep a window that has everything: H, A, D and a possession change.
 type Snap = { agents: [number, number][]; ball: [number, number]; seen: boolean; label: Label; nearest: number }
 const sim = new PitchSim(7)
 for (let i = 0; i < FPS * 40; i++) sim.step()
@@ -57,7 +57,7 @@ for (let s = 0; s + N < snaps.length; s += KPS) {
 const win = snaps.slice(best, best + N)
 win.push(win[0]) // cierra el bucle
 
-// 2) Geometría
+// 2) Geometry
 const S = 10
 const OX = 75
 const OY = 104
@@ -69,7 +69,7 @@ const dur = `${LOOP_S}s`
 const anim = (attr: string, values: (number | string)[], discrete = false) =>
   `<animate attributeName="${attr}" dur="${dur}" repeatCount="indefinite"${discrete ? ' calcMode="discrete"' : ""} values="${values.join(";")}"/>`
 
-// fundido al cerrar el bucle para que el salto no se note
+// fade when closing the loop so the jump isn't noticeable
 const fade = `<animate attributeName="opacity" dur="${dur}" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.02;0.98;1"/>`
 
 const lines: string[] = []
@@ -112,7 +112,7 @@ for (const side of [0, 1]) {
 L(`</g>`)
 
 L(`<g>${fade}`)
-// línea al jugador más cercano (la idea del baseline)
+// line to the nearest player (the baseline's idea)
 L(`<line stroke="${C.ink}" stroke-opacity=".55" stroke-width="1.6" stroke-dasharray="7 7">`)
 L(anim("x1", win.map((s) => px(s.ball[0]))))
 L(anim("y1", win.map((s) => py(s.ball[1]))))
@@ -130,7 +130,7 @@ sim.agents.forEach((a, i) => {
   L(`</circle>`)
 })
 
-// balón visible / balón perdido por el tracking
+// visible ball / ball lost by the tracking
 L(`<circle r="6.2" fill="${C.ball}">`)
 L(anim("cx", win.map((s) => px(s.ball[0]))))
 L(anim("cy", win.map((s) => py(s.ball[1]))))
@@ -143,7 +143,7 @@ L(anim("opacity", win.map((s) => (s.seen ? 0 : 0.8)), true))
 L(`</circle>`)
 L(`</g>`)
 
-// tira de posesiones del bucle, con cabezal
+// possession strip of the loop, with a playhead
 const SY = OY + PITCH.h * S + 34
 const SW = PITCH.w * S
 const cw = SW / N
@@ -169,4 +169,4 @@ L(`</svg>`)
 
 writeFileSync(out, lines.join("\n"))
 const counts = win.slice(0, N).reduce<Record<string, number>>((m, s) => ((m[s.label] = (m[s.label] ?? 0) + 1), m), {})
-console.log(`✓ ${out} (${Math.round(lines.join("\n").length / 1024)} KB) · ventana ${best / KPS}s · etiquetas`, counts)
+console.log(`✓ ${out} (${Math.round(lines.join("\n").length / 1024)} KB) · window ${best / KPS}s · labels`, counts)

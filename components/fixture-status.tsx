@@ -12,7 +12,7 @@ const style: Record<Status, string> = {
 }
 const text: Record<Status, string> = { played: "Played", live: "Live", next: "Next", upcoming: "Upcoming" }
 
-/** Estado de cada fecha según el día de hoy en Barcelona; se calcula en el navegador. */
+/** Status of each date given today's date in Barcelona; computed in the browser. */
 export function FixtureStatus({ start, end }: { start: string; end?: string }) {
   const [status, setStatus] = useState<Status | null>(null)
 
@@ -23,7 +23,7 @@ export function FixtureStatus({ start, end }: { start: string; end?: string }) {
     else if (today >= start && today <= last && end) setStatus("live")
     else if (today === start) setStatus("live")
     else {
-      // «Next» solo para la primera fecha futura
+      // "Next" only for the first future date
       const items = [...document.querySelectorAll<HTMLElement>("[data-fixture-start]")].map((n) => n.dataset.fixtureStart!)
       const firstFuture = items.find((d) => d > today)
       setStatus(firstFuture === start ? "next" : "upcoming")

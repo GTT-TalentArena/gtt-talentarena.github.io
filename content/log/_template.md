@@ -1,27 +1,28 @@
 ---
-# PLANTILLA · copia este fichero como content/log/AAAA-MM-DD-slug-corto.md
-# El log registra el trabajo sobre el MODELO DE POSESIÓN (en el fork del reto), nunca cambios de esta web.
-# El estudio largo en español (el cuaderno) va aparte, en docs/ del fork: aquí se resume y se enlaza.
-# Instrucciones completas al principio de lib/log.ts. Los ficheros que empiezan por _ no se publican.
+# TEMPLATE · copy this file as content/log/YYYY-MM-DD-short-slug.md
+# The log records the work on the POSSESSION MODEL (in the challenge fork), never changes to this website.
+# The long study (the notebook) lives separately, in the fork's docs/: here it is summarised and linked.
+# Full instructions at the top of lib/log.ts. Files starting with _ are not published.
+# Write everything in English (see CONTRIBUTING.md).
 title: "Hysteresis on possession changes"
 date: 2026-10-24
 type: experiment # study | code | experiment | iteration | data | decision
-outcome: failure # success | failure | mixed | open (obligatorio en experiment e iteration)
-authors: [hxst1, n1co2611] # handles de GitHub del squad
+outcome: failure # success | failure | mixed | open (required for experiment and iteration)
+authors: [hxst1, n1co2611] # squad GitHub handles
 summary: "Requiring the other team to hold the ball for 0.8 s before switching the label removed flicker, but merged two short real possessions into one."
-model: rules-hysteresis # modelo medido: una línea en la gráfica de /log (mismo nombre en todas sus versiones)
-version: v1 # versión: un punto en esa línea
+model: rules-hysteresis # model measured: one line on the /log chart (same name across all its versions)
+version: v1 # version: one point on that line
 metrics:
   - name: spellF1
     value: 0.3110
-    before: 0.3256 # baseline_smooth50 en la ventana pública (EVALUATION.md del fork)
-    split: public-5min # solo se comparan puntos del mismo split
-    low: 0.2480 # opcional: intervalo de bootstrap (run_evaluation.py --bootstrap 1000)
+    before: 0.3256 # baseline_smooth50 on the public window (the fork's EVALUATION.md)
+    split: public-5min # only points from the same split are compared
+    low: 0.2480 # optional: bootstrap interval (run_evaluation.py --bootstrap 1000)
     high: 0.3790
 tags: [hysteresis, possession-change, temporal-continuity]
 links:
-  - label: "Study (ES)"
-    href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/docs/<estudio>.md
+  - label: "Study"
+    href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/blob/main/docs/<study>.md
   - label: "PR #7"
     href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/pull/7
 ---

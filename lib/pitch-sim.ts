@@ -1,9 +1,9 @@
 /**
- * Simulación de tracking para la landing: 22 jugadores y un balón que se mueven como en un
- * partido, con la etiqueta de posesión del reto (H / A / D) en cada frame.
+ * Tracking simulation for the landing page: 22 players and a ball that move like in a
+ * match, with the challenge's possession label (H / A / D) on every frame.
  *
- * Es inventada de principio a fin: no usa ni reconstruye datos del partido (ver RULES.md del reto).
- * Es determinista por semilla, para que la landing y el SVG del README cuenten la misma jugada.
+ * It is invented from start to finish: it neither uses nor reconstructs match data (see the challenge's RULES.md).
+ * It is deterministic by seed, so the landing page and the README SVG tell the same play.
  */
 
 export type Team = "H" | "A"
@@ -35,12 +35,12 @@ type BallState =
       t: number
       dur: number
       receiver: number
-      /** si el pase acaba fuera del campo */
+      /** whether the pass ends outside the pitch */
       out: boolean
     }
   | { kind: "dead"; until: number; restart: Team; taker: number }
 
-// 4-3-3 para el equipo que ataca hacia la derecha
+// 4-3-3 for the team attacking to the right
 const FORMATION: [number, number][] = [
   [5, 34],
   [22, 10],
@@ -121,7 +121,7 @@ export class PitchSim {
     return this.agents.map((a, j) => ({ a, j })).filter(({ a, j }) => a.team === team && j !== i)
   }
 
-  /** Jugador más cercano al balón: la idea del baseline oficial. */
+  /** Player nearest the ball: the official baseline's idea. */
   nearest(): number {
     let best = 0
     let bd = Infinity
@@ -173,7 +173,7 @@ export class PitchSim {
       }
     }
     const rec = this.agents[receiver]
-    // apuntar un poco por delante del receptor
+    // aim slightly ahead of the receiver
     let toX = clamp(rec.x + rec.vx * 0.5 + d * 1.5, 1, PITCH.w - 1)
     let toY = clamp(rec.y + rec.vy * 0.5, 1, PITCH.h - 1)
     let out = false
@@ -225,7 +225,7 @@ export class PitchSim {
     this.t += 1 / FPS
     const s = this.state
 
-    // ── balón ──
+    // ── ball ──
     if (s.kind === "held") {
       const c = this.agents[s.carrier]
       const d = this.dir(c.team)
@@ -234,7 +234,7 @@ export class PitchSim {
       if (this.frame >= s.until) {
         const attackingThird = (c.team === "H" ? c.x : PITCH.w - c.x) > 84
         if (!c.gk && this.rng() < 0.07) {
-          // falta sobre el portador: balón parado y saca su equipo
+          // foul on the carrier: dead ball and their team restarts
           this.state = { kind: "dead", until: this.frame + this.span(2, 3.5), restart: c.team, taker: s.carrier }
         } else if (attackingThird && !c.gk && this.rng() < 0.4) this.startShot(s.carrier)
         else this.startPass(s.carrier)
@@ -244,7 +244,7 @@ export class PitchSim {
       const k = 1 - (1 - Math.min(1, s.t / s.dur)) ** 1.6
       this.ball.x = s.fromX + (s.toX - s.fromX) * k
       this.ball.y = s.fromY + (s.toY - s.fromY) * k
-      // intercepción: un rival que pisa la línea de pase
+      // interception: an opponent who steps into the passing lane
       if (!s.out && s.t > 4 && s.t < s.dur - 2) {
         const passer = this.possession
         const rival = this.nearestOf(passer === "H" ? "A" : "H", this.ball.x, this.ball.y)
@@ -262,7 +262,7 @@ export class PitchSim {
           const taker = this.nearestOf(restart, this.ball.x, this.ball.y)
           this.state = { kind: "dead", until: this.frame + this.span(2, 3.5), restart, taker }
         } else {
-          // un mal control también regala el balón
+          // a poor first touch also gives the ball away
           const rec = s.receiver
           const rival = this.nearestOf(this.agents[rec].team === "H" ? "A" : "H", this.ball.x, this.ball.y)
           if (rival >= 0 && this.rng() < 0.1) this.gain(rival)
@@ -287,7 +287,7 @@ export class PitchSim {
     const s = this.state
     this.label = s.kind === "dead" ? "D" : this.possession
 
-    // visibilidad del balón: el tracking lo pierde a ratos
+    // ball visibility: the tracking loses it at times
     if (this.frame >= this.seenUntil) {
       this.ball.seen = !this.ball.seen
       this.seenUntil = this.frame + (this.ball.seen ? this.span(3, 7) : this.span(1.5, 4.5))

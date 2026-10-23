@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Equipación Casa: papel, tinta azul noche y blaugrana */
+  /* Home kit: paper, midnight-blue ink and blaugrana */
   --color-paper: #f3eee6;
   --color-paper-2: #e9e2d5;
   --color-paper-3: #ddd4c4;
@@ -14,18 +14,18 @@
   --color-live: #2fbf71;
   --color-fail: #c2410c;
 
-  /* Blaugrana: marcas de identidad (punto del logo, balón, separadores) */
+  /* Blaugrana: identity marks (logo dot, ball, separators) */
   --color-blau: #1d3fc9;
   --color-grana: #a50044;
 
-  /* Campo: siempre sobre fondo oscuro */
+  /* Pitch: always on a dark background */
   --color-stadium: #0b0e2c;
   --color-stadium-ink: #f3eee6;
   --color-home: #6b8cff;
   --color-away: #ff4f8a;
   --color-ball: #e8ff2e;
 
-  /* Tipografía (lib/fonts.ts) */
+  /* Typography (lib/fonts.ts) */
   --font-sans: var(--f-geist), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--f-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--f-instrument), ui-serif, Georgia, serif;
@@ -59,7 +59,7 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-feature-settings: var(--body-features, normal);
-    /* nunca negritas ni cursivas falsas: si una fuente no tiene el peso, se queda con el suyo */
+    /* never fake bold or italics: if a font lacks the weight, it keeps its own */
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -76,7 +76,7 @@
   }
 }
 
-/* ─── Tipografía: ajustes de los titulares y de la palabra de acento ─── */
+/* ─── Typography: tuning of the headlines and the accent word ─── */
 :root {
   --body-features: "ss01", "cv11";
   --display-weight: 650;
@@ -84,7 +84,7 @@
   --display-opsz: 96;
   --display-tracking: -0.045em;
   --display-leading: 0.86;
-  /* ajusta los titulares gigantes al ancho de la tipografía */
+  /* fits the giant headlines to the typeface's width */
   --display-scale: 1;
   --accent-style: italic;
   --accent-weight: 400;
@@ -100,8 +100,8 @@
   line-height: var(--display-leading);
 }
 
-/* La palabra que cambia el tono: cursiva, manuscrita o recta según la combinación.
-   Tamaño relativo al texto que la rodea; para otro tamaño base usa [--accent-base:1.25rem]. */
+/* The word that shifts the tone: italic, handwritten or upright depending on the pairing.
+   Size relative to the surrounding text; for another base size use [--accent-base:1.25rem]. */
 @utility accent {
   font-family: var(--font-serif);
   font-style: var(--accent-style);
@@ -111,7 +111,7 @@
   font-size: calc(var(--accent-scale) * var(--accent-base, 1em));
 }
 
-/* Bloques sobre el color de acento: la tinta pasa a ser el color legible sobre él */
+/* Blocks on the accent colour: the ink becomes the colour that reads on it */
 @utility on-accent {
   --color-ink: var(--color-on-accent);
   --color-paper: var(--color-accent);
@@ -120,13 +120,13 @@
   color: var(--color-on-accent);
 }
 
-/* El estadio: sección oscura del campo */
+/* The stadium: the dark pitch section */
 @utility stadium {
   --color-ink: var(--color-stadium-ink);
   --color-paper: var(--color-stadium);
   --color-muted: color-mix(in srgb, var(--color-stadium-ink) 58%, var(--color-stadium));
   --color-line: color-mix(in srgb, var(--color-stadium-ink) 16%, transparent);
-  /* sobre el azul noche, el acento y el blaugrana necesitan más luz */
+  /* on midnight blue, the accent and the blaugrana need more light */
   --color-accent: var(--color-away);
   --color-blau: var(--color-home);
   --color-grana: var(--color-away);
@@ -134,7 +134,7 @@
   color: var(--color-stadium-ink);
 }
 
-/* Punto blaugrana: la marca mínima de GTT */
+/* Blaugrana dot: GTT's minimal mark */
 @utility blaugrana {
   background: linear-gradient(90deg, var(--color-blau) 50%, var(--color-grana) 50%);
 }
@@ -165,7 +165,7 @@
   opacity: 0.12;
 }
 
-/* ─── Texto de las entradas del log (Markdown) ───────────────────── */
+/* ─── Log entry text (Markdown) ──────────────────────────────────── */
 .prose-log {
   font-size: 1.125rem;
   line-height: 1.7;
@@ -226,14 +226,14 @@
   & th, & td { border-top: 1px solid var(--color-line); padding: 0.55em 0.8em 0.55em 0; }
   & img { border-radius: 16px; border: 1px solid var(--color-line); }
   & hr { border: 0; border-top: 1px solid var(--color-line); }
-  /* el texto a medida de lectura; las figuras usan todo el ancho del artículo */
+  /* text at reading measure; figures use the article's full width */
   & > :not(.viz, .prose-table) { max-width: 68ch; }
   & .prose-table { overflow-x: auto; }
   & .prose-table table { min-width: 34rem; }
   & > .viz { margin-top: 2em; }
 }
 
-/* ─── Figuras del log (lib/log-viz.ts) ───────────────────────────── */
+/* ─── Log figures (lib/log-viz.ts) ───────────────────────────────── */
 .viz {
   border: 1px solid var(--color-line);
   border-radius: 16px;
@@ -262,7 +262,7 @@
 .viz-legend i.viz-dot-ball { background: #fff; border: 1.5px solid var(--color-ink); }
 .viz code { font-size: 0.85em; }
 
-/* timeline: una fila por respuesta, la verdad arriba */
+/* timeline: one row per answer, the truth on top */
 .viz-tl { display: grid; gap: 0.55rem; }
 .viz-tl-row { display: grid; grid-template-columns: minmax(7rem, 11rem) 1fr 5.6rem; gap: 0.9rem; align-items: center; }
 .viz-tl-label { font-size: 0.85rem; line-height: 1.25; }
@@ -305,7 +305,7 @@
   .viz-tl-axisrow > :first-child { display: none; }
 }
 
-/* pitch: el campo en uno o varios instantes */
+/* pitch: the pitch at one or more moments */
 .viz-pitch-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 1.1rem 1rem; }
 @media (max-width: 640px) { .viz-pitch-grid { grid-template-columns: 1fr; } }
 .viz-pitch-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.45rem; min-height: 1.6rem; }
@@ -346,7 +346,7 @@
 .viz-q { position: absolute; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 700; font-size: 0.8rem; }
 .viz-pitch-caption { margin-top: 0.45rem; font-size: 0.82rem; line-height: 1.35; color: var(--color-ink-2); }
 
-/* bars, stats y roadmap */
+/* bars, stats and roadmap */
 .viz-bars-list { display: grid; gap: 0.55rem; }
 .viz-bar { display: grid; grid-template-columns: minmax(6rem, 12rem) 1fr 4.8rem; gap: 0.8rem; align-items: center; font-size: 0.85rem; }
 .viz-bar-track { height: 12px; border-radius: 0 4px 4px 0; background: color-mix(in srgb, var(--color-ink) 7%, transparent); }
@@ -391,7 +391,7 @@
   to { transform: none; }
 }
 
-/* ?still / ?noball: capturas de las previews (ver app/layout.tsx) */
+/* ?still / ?noball: preview screenshots (see app/layout.tsx) */
 .still .rise { animation: none; }
 .still .grain::after { display: none; }
 .noball [data-ball] { visibility: hidden; }

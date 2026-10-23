@@ -2,7 +2,7 @@ import { DataBall } from "@/components/data-ball"
 
 const RING = "More than a Hack 2027 · Talent Arena · Barcelona · 41.35°N 2.13°E · Frame by frame · "
 
-/** El balón dentro de un anillo de instrumento: texto en mono y 60 marcas, como un cronómetro. */
+/** The ball inside an instrument ring: mono text and 60 ticks, like a stopwatch. */
 export function BallBadge({ className = "", still = false }: { className?: string; still?: boolean }) {
   return (
     <div className={`group pointer-events-auto ${className}`}>

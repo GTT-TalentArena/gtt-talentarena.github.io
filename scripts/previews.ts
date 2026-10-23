@@ -1,11 +1,11 @@
 /**
- * Genera todas las imágenes del perfil de GitHub de la organización y la de Open Graph:
- *   1. pitch.svg                      → animación del campo (scripts/pitch-svg.ts)
- *   2. capturas PNG de /previews/*    → plantilla, avatar, social previews y Open Graph
- *   3. banner.svg y site.svg          → SVG animados con el balón (scripts/readme-svg.ts)
- * Destinos: ../.github/profile/assets (README), ../.github/brand (subida a mano) y app/.
+ * Generates every image on the organisation's GitHub profile, plus the Open Graph one:
+ *   1. pitch.svg                      → pitch animation (scripts/pitch-svg.ts)
+ *   2. PNG screenshots of /previews/* → squad, avatar, social previews and Open Graph
+ *   3. banner.svg and site.svg        → animated SVGs with the ball (scripts/readme-svg.ts)
+ * Destinations: ../.github/profile/assets (README), ../.github/brand (uploaded by hand) and app/.
  *
- * Uso: npm run build && npm run serve   (en otra terminal)
+ * Usage: npm run build && npm run serve   (in another terminal)
  *      npm run previews -- http://localhost:4173
  */
 import { spawn, spawnSync } from "node:child_process"
@@ -26,11 +26,11 @@ const browsers = [
   "/usr/bin/chromium",
 ]
 const browser = process.env.BROWSER_BIN ?? browsers.find((b) => existsSync(b))
-if (!browser) throw new Error("No encuentro Edge ni Chrome. Define BROWSER_BIN con la ruta del ejecutable.")
+if (!browser) throw new Error("Can't find Edge or Chrome. Set BROWSER_BIN to the executable's path.")
 
 const node = (script: string) => {
   const r = spawnSync(process.execPath, [join(root, "scripts", script)], { stdio: "inherit" })
-  if (r.status !== 0) throw new Error(`Falló ${script}`)
+  if (r.status !== 0) throw new Error(`${script} failed`)
 }
 
 type Shot = { route: string; w: number; h: number; out: string; scale?: number; wait?: number }
@@ -50,8 +50,8 @@ const shots: Shot[] = [
 
 node("pitch-svg.ts")
 
-// Perfil temporal NUEVO en cada llamada: nunca se toca el perfil del navegador de la persona, y si
-// se reutiliza uno, Edge le pasa el trabajo a la instancia anterior (aún viva) y sale sin hacer nada.
+// A NEW temporary profile on every call: the person's browser profile is never touched, and if
+// one is reused, Edge hands the work to the previous (still running) instance and exits doing nothing.
 const profiles: string[] = []
 const flags = (w: number, h: number, wait: number) => {
   const dir = mkdtempSync(join(tmpdir(), "gtt-previews-"))
@@ -79,19 +79,19 @@ try {
     )
     if (r.status !== 0 || !existsSync(s.out)) {
       console.error(r.stderr)
-      throw new Error(`Falló la captura de ${s.route}`)
+      throw new Error(`Screenshot of ${s.route} failed`)
     }
     const kb = Math.round(statSync(s.out).size / 1024)
     console.log(`✓ ${s.route.padEnd(30)} → ${s.out.replace(resolve(root, ".."), "..")} (${kb} KB)`)
   }
 
-  // dónde queda el balón en la preview de la web (lo apunta app/previews/site/ball-slot.tsx)
+  // where the ball sits in the site preview (recorded by app/previews/site/ball-slot.tsx)
   const ball = await readFromPage(`${base}/previews/site/`, "document.body.dataset.ball")
-  if (!ball) throw new Error("No encuentro la posición del balón en /previews/site/ (data-ball)")
+  if (!ball) throw new Error("Can't find the ball position in /previews/site/ (data-ball)")
   writeFileSync(join(cache, "site-ball.json"), JSON.stringify(ball.split(",").map(Number)))
-  console.log(`✓ posición del balón en la preview de la web: ${ball}`)
+  console.log(`✓ ball position in the site preview: ${ball}`)
 } finally {
-  // en Windows, Edge puede tardar en soltar los ficheros: si no se dejan borrar, se quedan en %TEMP%
+  // on Windows, Edge can take a while to release files: if they can't be deleted, they stay in %TEMP%
   for (const dir of profiles) {
     try {
       rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 })
@@ -102,9 +102,9 @@ try {
 node("readme-svg.ts")
 
 /**
- * Abre `url` en el navegador headless y devuelve el valor de `expression` en cuanto deja de estar
- * vacío. Usa el protocolo DevTools (WebSocket nativo de Node), no --dump-dom: en Edge 155 ese
- * modo dejó de escribir en la salida estándar.
+ * Opens `url` in the headless browser and returns the value of `expression` as soon as it stops
+ * being empty. Uses the DevTools protocol (Node's native WebSocket), not --dump-dom: in Edge 155
+ * that mode stopped writing to standard output.
  */
 async function readFromPage(url: string, expression: string, timeoutMs = 30_000): Promise<string | undefined> {
   const dir = mkdtempSync(join(tmpdir(), "gtt-previews-"))
@@ -115,8 +115,8 @@ async function readFromPage(url: string, expression: string, timeoutMs = 30_000)
     "--no-first-run",
     "--no-default-browser-check",
     `--user-data-dir=${dir}`,
-    // igual que en las capturas: sin barras de scroll (si no, el iframe pierde ~15 px de ancho
-    // y todo lo alineado a la derecha, como el balón, se mide desplazado respecto a la captura)
+    // same as in the screenshots: no scrollbars (otherwise the iframe loses ~15 px of width
+    // and everything right-aligned, like the ball, is measured offset from the screenshot)
     "--hide-scrollbars",
     "--remote-debugging-port=0",
     "--window-size=1280,800",
@@ -125,10 +125,10 @@ async function readFromPage(url: string, expression: string, timeoutMs = 30_000)
   const deadline = Date.now() + timeoutMs
   const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
   try {
-    // el navegador apunta su puerto de depuración en DevToolsActivePort dentro del perfil
+    // the browser writes its debugging port to DevToolsActivePort inside the profile
     const portFile = join(dir, "DevToolsActivePort")
     while (!existsSync(portFile) || !readFileSync(portFile, "utf8").includes("\n")) {
-      if (Date.now() > deadline) throw new Error("El navegador no abrió el puerto de depuración")
+      if (Date.now() > deadline) throw new Error("The browser didn't open the debugging port")
       await wait(100)
     }
     const [port, path] = readFileSync(portFile, "utf8").trim().split("\n")

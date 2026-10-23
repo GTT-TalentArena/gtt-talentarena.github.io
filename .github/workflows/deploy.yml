@@ -1,5 +1,5 @@
-# Publica la web en GitHub Pages (https://gtt-talentarena.github.io) en cada push a main.
-# Una entrada nueva del log en content/log/ es solo un push: este workflow compila y publica.
+# Publishes the site on GitHub Pages (https://gtt-talentarena.github.io) on every push to main.
+# A new log entry in content/log/ is just a push: this workflow builds and publishes.
 name: Deploy to GitHub Pages
 
 on:
@@ -26,7 +26,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      # Valida también las cabeceras del log: si una está mal, el build falla con «[log] …»
+      # Also validates the log headers: if one is wrong, the build fails with "[log] …"
       - run: npm run build
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
