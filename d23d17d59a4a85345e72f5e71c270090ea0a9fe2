@@ -1,0 +1,11 @@
+English translation (original message in Spanish above):
+
+docs(log): the team's work in the log, and a cleanup of older entries (#12)
+
+Four new entries with what was already documented in the fork:
+- Face-off of two candidates with a neutral evaluator (#26, #28)
+- Reproducible Docker to validate and score (#24, #29, #30)
+- P0 pipeline: from a config to a recorded score (#12, #31)
+- P1 baseline-hold experiment, mixed result (#13, #32)
+
+The automatic entry for PR #2 is removed (it is about the log, not the model); "The fork stays public" becomes a section of "Reading the challenge"; the link to the study points to main.
