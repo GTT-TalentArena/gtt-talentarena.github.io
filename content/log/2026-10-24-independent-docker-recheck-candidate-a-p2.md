@@ -92,4 +92,4 @@ On the real bundle the bounded detector finds 17 preparation candidates versus z
 
 ## Next
 
-Keep P2 disabled by default in A while the correction is reviewed. A detector regression can be fixed without improving the complete model; more preparations alone do not justify adoption. This small six-match synthetic check is not a statistically established real-match gain or loss. No real ground truth or further public-window scoring was used, no match rows are published, no thresholds were changed after viewing results, and no new PR was created. The second-half initial kick-off boundary remains a separate open issue.
+Keep P2 disabled by default in A while the correction is reviewed. A detector regression can be fixed without improving the complete model; more preparations alone do not justify adoption. This small six-match synthetic check is not a statistically established real-match gain or loss. No real ground truth or further public-window scoring was used, no match rows are published, no thresholds were changed after viewing results, and no new model PR was created. The second-half initial kick-off boundary remains a separate open issue.
