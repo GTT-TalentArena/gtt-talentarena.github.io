@@ -5,15 +5,30 @@ type: experiment
 outcome: mixed
 authors: [hxst1]
 summary: "Candidate B of the face-off (#26). A deterministic rule-based model written by Codex (v0) and improved in four documented iterations by Claude. The final v4 passes the pre-registered guard on the public window, but every gain is within that window's noise."
+model: candidate-b # same name for every version: one line on the /log chart
+version: v4
 metrics:
   - name: spellF1
     value: 0.4000
-    before: 0.3895
+    before: 0.3895 # v0
     split: public-5min
+    low: 0.2133 # 90 % bootstrap interval
+    high: 0.5867
+    date: 2026-10-21
   - name: macroF1
     value: 0.6983
     before: 0.6620
     split: public-5min
+    date: 2026-10-21
+  # earlier versions: points on the chart only (prompts/confrontacion/b-gpt-claude/resultados.csv)
+  - { name: spellF1, value: 0.3895, low: 0.2421, high: 0.5368, split: public-5min, version: v0, date: 2026-10-21 }
+  - { name: macroF1, value: 0.6620, split: public-5min, version: v0, date: 2026-10-21 }
+  - { name: spellF1, value: 0.3895, low: 0.2421, high: 0.5368, split: public-5min, version: v1, date: 2026-10-21 }
+  - { name: macroF1, value: 0.6620, split: public-5min, version: v1, date: 2026-10-21 }
+  - { name: spellF1, value: 0.3122, low: 0.1854, high: 0.4488, split: public-5min, version: v2, date: 2026-10-21 }
+  - { name: macroF1, value: 0.6652, split: public-5min, version: v2, date: 2026-10-21 }
+  - { name: spellF1, value: 0.3895, low: 0.2421, high: 0.5368, split: public-5min, version: v3, date: 2026-10-21 }
+  - { name: macroF1, value: 0.6901, split: public-5min, version: v3, date: 2026-10-21 }
 tags: [rules, possession-change, temporal-continuity, min-duration, state-of-the-art]
 links:
   - label: "Face-off protocol (#26)"

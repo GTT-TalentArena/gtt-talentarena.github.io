@@ -107,6 +107,19 @@ export function ResultsChart({
   const x1 = Math.max(t(last), x0 + 7 * DAY)
   const x = (iso: string) => m.left + ((t(iso) - x0) / (x1 - x0)) * plotW
 
+  // versions of one model measured on the same day are spread out within that day instead of stacking
+  const dayW = (plotW * DAY) / (x1 - x0)
+  const shift = new Map<ResultPoint, number>()
+  for (const s of series) {
+    const byDay = new Map<string, ResultPoint[]>()
+    for (const p of s.list) byDay.set(p.date, [...(byDay.get(p.date) ?? []), p])
+    for (const list of byDay.values()) {
+      const step = Math.min((dayW * 0.8) / Math.max(list.length - 1, 1), 16)
+      list.forEach((p, i) => shift.set(p, (i - (list.length - 1) / 2) * step))
+    }
+  }
+  const px = (p: ResultPoint) => x(p.date) + (shift.get(p) ?? 0)
+
   // Y axis: values, intervals and references, with margin; within [0, 1] if the metric is
   const ys = [...slice.flatMap((p) => [p.value, p.low ?? p.value, p.high ?? p.value]), ...refs.map((r) => r.value)]
   const unit = ys.every((v) => v >= 0 && v <= 1)
@@ -125,7 +138,7 @@ export function ResultsChart({
   // direct label at the end of each line; if two collide, the top one stays and the other goes to the legend
   const ends = series
     .map((s) => ({ s, p: s.list.at(-1)! }))
-    .map((e) => ({ ...e, yy: y(e.p.value), xx: x(e.p.date) }))
+    .map((e) => ({ ...e, yy: y(e.p.value), xx: px(e.p) }))
     .sort((a, b) => a.yy - b.yy)
   const shown: typeof ends = []
   for (const e of ends) if (!shown.some((k) => Math.abs(k.yy - e.yy) < 15 && Math.abs(k.xx - e.xx) < 140)) shown.push(e)
@@ -230,9 +243,9 @@ export function ResultsChart({
               .filter((p) => p.low !== undefined)
               .map((p) => (
                 <g key={`ci-${p.slug}-${p.model}-${p.version}`} stroke={colors[p.model]} strokeOpacity={0.5} strokeWidth={1.5}>
-                  <line x1={x(p.date)} x2={x(p.date)} y1={y(p.low!)} y2={y(p.high!)} />
-                  <line x1={x(p.date) - 4} x2={x(p.date) + 4} y1={y(p.low!)} y2={y(p.low!)} />
-                  <line x1={x(p.date) - 4} x2={x(p.date) + 4} y1={y(p.high!)} y2={y(p.high!)} />
+                  <line x1={px(p)} x2={px(p)} y1={y(p.low!)} y2={y(p.high!)} />
+                  <line x1={px(p) - 4} x2={px(p) + 4} y1={y(p.low!)} y2={y(p.low!)} />
+                  <line x1={px(p) - 4} x2={px(p) + 4} y1={y(p.high!)} y2={y(p.high!)} />
                 </g>
               ))}
 
@@ -240,7 +253,7 @@ export function ResultsChart({
             {series.map((s) => (
               <polyline
                 key={s.model}
-                points={s.list.map((p) => `${x(p.date)},${y(p.value)}`).join(" ")}
+                points={s.list.map((p) => `${px(p)},${y(p.value)}`).join(" ")}
                 fill="none"
                 stroke={s.color}
                 strokeWidth={2}
@@ -250,7 +263,7 @@ export function ResultsChart({
             ))}
 
             {/* the best result, with a ring */}
-            {best && <circle cx={x(best.date)} cy={y(best.value)} r={9.5} fill="none" className="stroke-ink" strokeWidth={1.5} />}
+            {best && <circle cx={px(best)} cy={y(best.value)} r={9.5} fill="none" className="stroke-ink" strokeWidth={1.5} />}
 
             {/* points: each one is a link to its entry */}
             {slice.map((p) => (
@@ -264,9 +277,9 @@ export function ResultsChart({
                 onBlur={() => setHover(null)}
                 className="outline-none"
               >
-                <circle cx={x(p.date)} cy={y(p.value)} r={14} fill="transparent" />
+                <circle cx={px(p)} cy={y(p.value)} r={14} fill="transparent" />
                 <circle
-                  cx={x(p.date)}
+                  cx={px(p)}
                   cy={y(p.value)}
                   r={hover === p ? 6 : 4.5}
                   fill={colors[p.model]}
@@ -311,7 +324,7 @@ export function ResultsChart({
           </div>
         )}
 
-        {width !== null && hover && <Tooltip p={hover} color={colors[hover.model]} left={x(hover.date)} top={y(hover.value)} width={W} />}
+        {width !== null && hover && <Tooltip p={hover} color={colors[hover.model]} left={px(hover)} top={y(hover.value)} width={W} />}
       </div>
 
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4 border-t border-line pt-4">

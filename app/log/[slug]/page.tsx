@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getEntries, getEntry, logTypes, modelColors } from "@/lib/log"
+import { getEntries, getEntry, headline, logTypes, modelColors } from "@/lib/log"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Arrow } from "@/components/icons"
@@ -31,7 +31,7 @@ export default async function EntryPage({ params }: { params: Params }) {
   const older = entries[i + 1]
   // models measured in this entry, in the colour of their line on the /log chart
   const colors = modelColors(entries)
-  const models = [...new Map(e.metrics.filter((m) => m.model).map((m) => [`${m.model} ${m.version}`, m])).values()]
+  const models = [...new Map(headline(e).filter((m) => m.model).map((m) => [`${m.model} ${m.version}`, m])).values()]
   const long = new Date(`${e.date}T12:00:00Z`).toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
@@ -66,9 +66,9 @@ export default async function EntryPage({ params }: { params: Params }) {
               </h1>
               <p className="mt-6 text-pretty text-xl leading-snug sm:text-2xl">{e.summary}</p>
 
-              {e.metrics.length > 0 && (
+              {headline(e).length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-3">
-                  {e.metrics.map((m) => (
+                  {headline(e).map((m) => (
                     <MetricPill key={m.name + m.split + m.model + m.version} m={m} big color={m.model && colors[m.model]} />
                   ))}
                 </div>

@@ -63,6 +63,7 @@
  *        high: 0.3390
  *        model: rules           # optional: another model/version for this metric only (to compare variants)
  *        version: v1
+ *        date: 2026-10-21       # optional: day this version was measured, if before the entry's date
  *
  *  ── The results chart (at the top of /log) ─────────────────────────────────────────────────
  *  Each metric with a model and version is a point: X axis = date, Y axis = value, one line per
@@ -70,7 +71,7 @@
  *  the same split are compared. Each point links to its entry, and the entry shows its model in
  *  the same colour. The reference lines (published baseline) are in lib/log-meta.ts → references.
  *  ALWAYS use the same model name for its versions (hmm-viterbi v1, v2…): a different name is
- *  another line.
+ *  another line. Versions of one model measured on the same day are spread out within that day.
  *    tags:     [hysteresis, smoothing]                         (optional · see "Current focus areas")
  *    links:                                                    (optional · always to the fork: docs/, commit, PR, Jupyter)
  *      - label: "Study"
@@ -190,6 +191,10 @@ function parse(file: string): LogEntry {
     if (model && !version) fail(file, `metrics[${i}]: "version" is missing for the model "${model}" (e.g. v1)`)
     if (version && !model) fail(file, `metrics[${i}]: there is a "version" but "model" is missing`)
 
+    const date = x.date instanceof Date ? x.date.toISOString().slice(0, 10) : x.date === undefined ? undefined : String(x.date)
+    if (date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(date)) fail(file, `metrics[${i}].date must be YYYY-MM-DD`)
+    if (date && date > rawDate!) fail(file, `metrics[${i}].date can't be after the entry's date`)
+
     return {
       name: String(x.name),
       value,
@@ -198,6 +203,8 @@ function parse(file: string): LogEntry {
       better: x.better === "lower" ? "lower" : "higher",
       model,
       version,
+      date,
+      history: Boolean(x.version && entryVersion && version !== entryVersion && model === entryModel),
       low,
       high,
     }

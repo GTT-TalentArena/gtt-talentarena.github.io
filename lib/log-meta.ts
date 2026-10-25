@@ -31,6 +31,10 @@ export type Metric = {
   /** Model and version measured: each metric with a model is a point on the results chart. */
   model?: string
   version?: string
+  /** Day this version was measured, if earlier than the entry (an entry that sums up several versions). */
+  date?: string
+  /** An earlier version of the entry's own model: it goes on the chart, not in the entry's pills. */
+  history?: boolean
   /** Bootstrap interval (e.g. run_evaluation.py --bootstrap 1000), if computed. */
   low?: number
   high?: number
@@ -84,6 +88,9 @@ export const NO_SPLIT = "unspecified"
 const canonical: Record<string, string> = { spellf1: "spellF1", macrof1: "macroF1" }
 export const metricName = (name: string) => canonical[name.toLowerCase()] ?? name
 
+/** The metrics an entry shows as pills: its own version's, without the earlier versions it sums up. */
+export const headline = (e: LogEntry) => e.metrics.filter((m) => !m.history)
+
 /** All metrics with a model, oldest first. */
 export function resultPoints(entries: LogEntry[]): ResultPoint[] {
   return entries
@@ -93,7 +100,7 @@ export function resultPoints(entries: LogEntry[]): ResultPoint[] {
         .map((m) => ({
           slug: e.slug,
           title: e.title,
-          date: e.date,
+          date: m.date ?? e.date,
           outcome: e.outcome,
           metric: metricName(m.name),
           split: m.split ?? NO_SPLIT,
@@ -105,7 +112,8 @@ export function resultPoints(entries: LogEntry[]): ResultPoint[] {
           better: m.better,
         })),
     )
-    .sort((a, b) => a.date.localeCompare(b.date) || a.slug.localeCompare(b.slug))
+    // same day: versions in order (v1.2 < v1.10), whatever entry or header line they come from
+    .sort((a, b) => a.date.localeCompare(b.date) || a.version.localeCompare(b.version, "en", { numeric: true }) || a.slug.localeCompare(b.slug))
 }
 
 /** Split shown by default for a metric: the public window if it exists; otherwise the most used. */
