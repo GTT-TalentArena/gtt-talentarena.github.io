@@ -1,5 +1,5 @@
 import Link from "next/link"
-import type { LogEntry } from "@/lib/log-meta"
+import { headline, type LogEntry } from "@/lib/log-meta"
 import { Arrow } from "@/components/icons"
 import { Authors, MetricPill, OutcomeChip, TypeChip } from "@/components/log/parts"
 
@@ -38,9 +38,9 @@ export function LogRow({
           {e.title}
         </span>
         <span className="mt-2 block max-w-3xl text-pretty leading-relaxed text-muted">{e.summary}</span>
-        {e.metrics.length > 0 && (
+        {headline(e).length > 0 && (
           <span className="mt-4 flex flex-wrap gap-2">
-            {e.metrics.map((m) => (
+            {headline(e).map((m) => (
               <MetricPill key={m.name + m.split + m.model + m.version} m={m} color={m.model && colors[m.model]} />
             ))}
           </span>
