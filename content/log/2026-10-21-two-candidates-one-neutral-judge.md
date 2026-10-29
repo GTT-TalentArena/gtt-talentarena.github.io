@@ -16,6 +16,14 @@ links:
     href: https://github.com/GTT-TalentArena/more-than-a-hack-2027/pull/28
 ---
 
+> **Update, 29 October 2026: steps 3 and 4 below are withdrawn.** The challenge rules forbid human
+> labels on the challenge match, also for validation, and a blind review that marks which candidate is
+> right on 40 intervals of its video would be one. The public window only checks that the pipeline
+> works; it does not pick between candidates either. Candidates are now compared on synthetic cases
+> and on other permitted matches (DFL open data), with the plan fixed before scoring: see
+> [issue #47](https://github.com/GTT-TalentArena/more-than-a-hack-2027/issues/47). The original text
+> is kept below unchanged, for traceability.
+
 ## Context
 
 We have no private ground truth, and the public window is too small to choose between two methods: 17
@@ -37,6 +45,8 @@ Agreed on a call on 21 October by Jimy, Edu and Alejandro:
 - At most **five public evaluations** per candidate, all logged, and none used to pick hyperparameters.
 
 ## How the winner is picked
+
+*Steps 3 and 4 were withdrawn on 29 October 2026; see the update at the top.*
 
 Fixed before any score is seen, in this order:
 
