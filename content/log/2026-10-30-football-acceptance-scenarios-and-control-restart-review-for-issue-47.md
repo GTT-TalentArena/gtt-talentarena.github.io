@@ -7,7 +7,9 @@ authors: [PabloCordoba3]
 summary: "Reproducible synthetic football cases and baseline findings, with external validation dependencies recorded before comparing A and the variant."
 metrics: []
 tags: [football-validation, synthetic-tests]
-links: ["https://github.com/GTT-TalentArena/more-than-a-hack-2027/issues/47"]
+links:
+  - label: "Issue #47"
+    href: "https://github.com/GTT-TalentArena/more-than-a-hack-2027/issues/47"
 ---
 
 ## Context
